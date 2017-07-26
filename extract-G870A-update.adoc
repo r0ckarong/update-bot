@@ -1,0 +1,78 @@
+= Extract current release number from ATT device page
+
+[NOTE]
+====
+TODO:
+
+Extract build number
+extract changes
+extract filesize
+Extract previous build number
+calculate download URL
+====
+
+* Device page:
++
+link:https://www.att.com/devicehowto/tutorial.html#!/stepbystep/id/stepbystep_KM1126238?make=Samsung&model=GalaxyS5ActiveG870A[https://www.att.com/devicehowto/tutorial.html#!/stepbystep/id/stepbystep_KM1126238?make=Samsung&model=GalaxyS5ActiveG870A]
+* Identified service point for updates:
++
+link:https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport[https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport]
+* Download service info as JSON:
++
+----
+curl -i https://services.att.com/kmservices/v2/contents/KM1126238\?app-id\=esupport\ -H "Accept: application/json" -o att.json
+----
+* Parse details 'currentsoftdetails'
+----
+cat att.json|jq '. | .resultBody | .contentTypeProperties | .currentsoftdetails'
+----
+* Parse changes `currentsoftupd`
+----
+cat att.json|jq '. | .resultBody | .contentTypeProperties | .currentsoftupd'
+----
+
+.Result `currentsoftdetails` for G870AAUCS2DQD1
+----
+"<p><label><strong>The details</strong></label></p><ul><li><strong><span class=\"bold_label_details\">Release date:</span></strong> April 27, 2017</li><li><strong><span class=\"bold_label_details\">Android version:</span></strong> 6.0.1</li><li><span class=\"bold_label_details\"><strong>Security patch level (SPL):</strong></span> April 1, 2017</li><li><strong><span class=\"bold_label_details\">Baseband version:</span></strong> G870AUCS2DQD1</li><li><strong><span class=\"bold_label_details\">Kernel version:</span></strong> 3.4.0-9723602</li><li><strong><span class=\"bold_label_details\">Build number:</span></strong> MMB29M.G870AUCS2DQD1</li><li><strong>Previous versions required:</strong> G870AUCS2DPK7</li><li><strong><span class=\"bold_label_details\">File size:</span></strong> 26.4MB</li></ul>"
+----
+
+.Result `currentsoftupd` for G870AAUCS2DQD1
+----
+"currentsoftupd": "<label><strong>The updates</strong></label><ul><li><strong><span class=\"bold_label_updates\">What's new:</span></strong> Android device security updates</li></ul>",
+----
+
+
+== Get content via `requests`
+
+
+----
+import requests
+
+headers = {'Accept': 'application/json'}
+
+r = requests.get('https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport', headers=headers)
+
+data = r.json()
+
+xml = data['resultBody']['contentTypeProperties']['currentsoftdetails']
+xml2 = data['resultBody']['contentTypeProperties']['currentsoftupd']
+
+# Current version
+pos = xml.find("Baseband version:",0)
+verpos = xml.find("G870A",pos+17,pos+57)
+current_version = xml[verpos:verpos+13]
+
+# Previous version
+prev = xml.find("Previous versions required:",0)
+prev_ver = xml.find("G870A",prev+27,prev+40)
+previous_version = xml[prev_ver:prev_ver+13]
+print(previous_version)
+
+# Changes
+new = xml2.rfind("What's new:",0)
+endnew = xml2.rfind('li>',new+11)
+news = xml2.find(' ',new+11)
+version_changes = xml2[news+1:endnew-2]
+
+print (current_version + ' ' + previous_version + ' ' + version_changes)
+----
