@@ -14,6 +14,7 @@ message = ''
 def do_updates():
     find_g870a_update()
     find_qbt_update()
+    find_kpxc_update()
 
 def get_current(tp):
     global known_versions
@@ -40,6 +41,8 @@ def prepare_msg(tp, version, url):
         package = 'the G870A'
     elif tp == 'qbt':
         package = 'qBittorrent'
+    elif tp == 'kpxc':
+        package = 'KeePassXC'
 
     text = 'A new update for %s is released:\n%s\nDownload here: %s'
 
@@ -62,10 +65,9 @@ def find_g870a_update():
     data = r.json()
 
     xml = data['resultBody']['contentTypeProperties']['currentsoftdetails']
-    xml2 = data['resultBody']['contentTypeProperties']['currentsoftupd']
+    # xml2 = data['resultBody']['contentTypeProperties']['currentsoftupd']
 
     # soup = BeautifulSoup(xml,'html.parser')
-    # print(soup.find_all('span'))
 
     # Current version
     pos = xml.find("Baseband version:",0)
@@ -94,7 +96,7 @@ def find_qbt_update():
 
     html = requests.get('https://www.qbittorrent.org/news.php')
     soup = BeautifulSoup(html.text,'html.parser')
-    verstring = soup.p.string
+    verstring = str(soup.p.string)
 
     endpos = verstring.find(' was',0)
     verpos = verstring.find('3', 0)
@@ -109,6 +111,28 @@ def find_qbt_update():
         append_known(tp, version)
     else:
         print('No new version for qBittorrent')
+
+def find_kpxc_update():
+    tp = 'kpxc'
+    get_current(tp)
+
+    html = requests.get('https://keepassxc.org/blog/feed.xml')
+    soup = BeautifulSoup(html.text,'html.parser')
+    verstring = str(soup.item.title)
+
+    verpos = verstring.find('KeePassXC ', 0)
+    endpos = verstring.find(' released',0)
+    version = str(verstring[verpos+10:endpos])
+    url = str(soup.item.guid.string)
+
+    prepare_msg(tp, version, url)
+
+    if version != known:
+        send_bot_msg(message)
+        print(url)
+        append_known(tp, version)
+    else:
+        print('No new version for KeePassXC')
 
 schedule.every().day.at("00:00").do(do_updates)
 schedule.every().day.at("12:00").do(do_updates)
