@@ -8,13 +8,6 @@ import time
 
 import pdb
 
-verstring = ''
-known = ''
-known_versions = ''
-version = ''
-previous_version = ''
-message = ''
-
 def get_known_versions():
     global known_versions
     with open('known_versions.json','r') as verfile:
@@ -168,7 +161,7 @@ class Atom(Update):
         self.url = self.build_url()
 
     def get_version(self):
-        self.version = str(self.data['name'])
+        version = str(self.data['name'])
         return version
 
     def build_url(self):
