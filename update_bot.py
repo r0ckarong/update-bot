@@ -1,140 +1,177 @@
 from bs4 import BeautifulSoup
 import requests
-import schedule
-import telepot
-import time
-import os
-import pdb
 import json
+import telepot
+import os
+import schedule
+import time
 
+import pdb
+
+verstring = ''
 known = ''
-known_versions = {}
-message = ''
+known_versions = ''
 version = ''
-data = ''
+previous_version = ''
+message = ''
 
-def get_current(package):
+def get_known_versions():
     global known_versions
-    global known
     with open('known_versions.json','r') as verfile:
         known_versions = json.load(verfile)
-        known = str(known_versions[package][-1])
-    return known
+    return known_versions
 
-def strain_version(verstring, verpos, endpos):
-    global version
-    start = verstring.find(verpos, 0)
-    end = verstring.find(endpos, 0)
-    sievelen = len(verpos)
-    version = str(verstring[start+sievelen:end])
-    return version
+def do_update():
+    get_known_versions()
 
-def append_known(package, version):
-    global known_versions
+    updates = [
+    G870A(),
+    qBittorrent(),
+    KeePassXC()
+    ]
 
-    if version not in known_versions[package]:
-        known_versions[package].append(unicode(version))
-        with open('known_versions.json','w') as verfile:
-            verlist = json.dumps(known_versions, indent=4, sort_keys=True)
-            verfile.write(verlist)
-    else:
-        print(package + 'version ' + version + ' already known.')
+    for update in updates:
+        # print(update.known_versions)
+        # print(update.known)
+        # print(update.version)
+        # print(update.url)
+
+        if update.version not in update.known_versions:
+            update.append_known(update.package,update.version)
+            notify(update.package,update.version,update.url,update.known)
+        else:
+            print(update.package + ' version ' + update.version + ' is already known.')
 
 def liquidize(html):
-    global data
     data = BeautifulSoup(html.text,'html.parser')
     return data
 
 def prepare_msg(package, version, url):
-    global message
-
     text = 'A new update for %s is released:\n%s\nDownload here: %s'
 
     message = text % (package, str(version), str(url))
     return message
 
 def send_bot_msg(message):
-    user_id = os.environ['USER_ID']
     bot = telepot.Bot(os.environ['BOT_TOKEN'])
+    user_id = os.environ['USER_ID']
     bot.sendMessage(user_id, message)
 
-def notify(package, version, url):
+def notify(package, version, url, known):
     if version != known:
-        prepare_msg(package, version, url)
+        message = prepare_msg(package, version, url)
         send_bot_msg(message)
-        print(url)
-        append_known(package, version)
+        print(message)
     else:
         print('No new version for ' + package)
 
-def find_g870a_update():
-    package = 'G870A'
-    get_current(package)
+class Update(object):
 
-    data = requests.get('https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport', headers={'Accept': 'application/json'}).json()
+    def __init__(self, package, version, known_versions, known):
+        self.package = package
+        self.version = version
+        self.known_versions = get_known_versions()[package]
+        self.known = self.get_current()
 
-    xml = data['resultBody']['contentTypeProperties']['currentsoftdetails']
-    # xml2 = data['resultBody']['contentTypeProperties']['currentsoftupd']
+    def get_current(self, package):
+        self.known = str(known_versions[package][-1])
+        return self.known
 
-    # data = BeautifulSoup(xml,'html.parser')
+    def strain_version(self, verstring, verpos, endpos):
+        start = verstring.find(verpos, 0)
+        end = verstring.find(endpos, 0)
+        sievelen = len(verpos)
+        self.version = str(verstring[start+sievelen:end])
+        return self.version
 
-    # Current version
-    pos = xml.find("Baseband version:",0)
-    verpos = xml.find("G870A",pos+17,pos+57)
-    version = xml[verpos:verpos+13]
+    def append_known(self, package, version):
+        self.known_versions.append(unicode(version))
+        known_versions[package] = self.known_versions
+        print ('Added ' + package + ' version ' + version + ' to list.')
+        with open('known_versions.json','w') as verfile:
+            verlist = json.dumps(known_versions, indent=4, sort_keys=True)
+            verfile.write(verlist)
 
-    # Previous version
-    prev = xml.rfind("Previous versions required:",0)
-    prev_ver = xml.find("G870A",prev+27)
-    previous_version = xml[prev_ver:prev_ver+13]
+    def print_version(self, version):
+        print(self.version)
 
-    url =  'https://xdmd.sl.attcompute.com/agents/42998/1488/SS-' + previous_version + '-to-' + version[7:] + '-UP'
+class G870A(Update):
 
-    notify(package, version, url)
+    def __init__(self):
+        self.package = 'G870A'
+        self.xml = requests.get('https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport', headers={'Accept': 'application/json'}).json()['resultBody']['contentTypeProperties']['currentsoftdetails']
+        self.version = self.get_version()
+        self.previous_version = self.get_previous()
+        self.known = self.get_current(self.package)
+        self.known_versions = get_known_versions()[self.package]
+        self.url = self.build_url()
 
-def find_qbt_update():
-    package = 'qBittorrent'
-    get_current(package)
+    def get_version(self):
+        pos = self.xml.find("Baseband version:",0)
+        verpos = self.xml.find("G870A",pos+17,pos+57)
+        version = self.xml[verpos:verpos+13]
+        return version
 
-    html = requests.get('https://www.qbittorrent.org/news.php')
-    liquidize(html)
-    verstring = str(data.p.string)
+    def get_previous(self):
+        prev = self.xml.rfind("Previous versions required:",0)
+        prev_ver = self.xml.find("G870A",prev+27)
+        previous_version = self.xml[prev_ver:prev_ver+13]
+        return previous_version
 
-    strain_version(verstring, 'qBittorrent ', ' was')
+    def build_url(self):
+        url = 'https://xdmd.sl.attcompute.com/agents/42998/1488/SS-' + self.get_previous() + '-to-' + self.get_version()[7:] + '-UP'
+        return url
 
-    url = 'https://sourceforge.net/projects/qbittorrent/files/qbittorrent/qbittorrent-' + version[0:] + '/qbittorrent-' + version[0:] + '.tar.gz/download'
+class qBittorrent(Update):
 
-    notify(package, version, url)
+    def __init__(self):
+        self.package = 'qBittorrent'
+        self.verstring = str(liquidize(requests.get('https://www.qbittorrent.org/news.php')).p.string)
+        self.version = self.get_version()
+        self.known = self.get_current(self.package)
+        self.known_versions = get_known_versions()[self.package]
+        self.url = self.build_url()
 
-def find_kpxc_update():
-    package = 'KeePassXC'
-    get_current(package)
+    def get_version(self):
+        version = self.strain_version(self.verstring, 'qBittorrent ', ' was')
+        return version
 
-    html = requests.get('https://keepassxc.org/blog/feed.xml')
-    liquidize(html)
-    verstring = str(data.item.title)
+    def build_url(self):
+        url = 'https://sourceforge.net/projects/qbittorrent/files/qbittorrent/qbittorrent-' + self.get_version()[1:] + '/qbittorrent-' + self.get_version()[1:] + '.tar.gz/download'
+        return url
 
-    strain_version(verstring, 'KeePassXC ', ' released')
+class KeePassXC(Update):
 
-    url = str(data.item.guid.string)
+    def __init__(self):
+        self.package = 'KeePassXC'
+        self.html = requests.get('https://keepassxc.org/blog/feed.xml')
+        self.data = liquidize(self.html)
+        self.verstring = str(self.data.item.title)
+        self.version = self.get_version()
+        self.known = self.get_current(self.package)
+        self.known_versions = get_known_versions()[self.package]
+        self.url = self.data.item.guid.string
 
-    notify(package, version, url)
+    def get_version(self):
+        version = self.strain_version(self.verstring, 'KeePassXC ', ' released')
+        return version
 
-def do_updates():
-    find_g870a_update()
-    find_qbt_update()
-    find_kpxc_update()
+def main():
 
-schedule.every().day.at("00:00").do(do_updates)
-schedule.every().day.at("12:00").do(do_updates)
+    do_update()
 
-do_updates()
+    schedule.every().day.at("00:00").do(do_update)
+    schedule.every().day.at("12:00").do(do_update)
+    schedule.every().day.at("17:04").do(do_update)
 
-try:
-    while True:
-        schedule.run_pending()
+    try:
+        while True:
+            schedule.run_pending()
 
-        time.sleep(30)
+            time.sleep(30)
 
-except KeyboardInterrupt:
-    print "Terminated!"
+    except KeyboardInterrupt:
+        print "Terminated!"
+
+if __name__ == "__main__":
+    main()
