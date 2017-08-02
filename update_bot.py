@@ -13,6 +13,54 @@ message = ''
 version = ''
 data = ''
 
+class Update(object):
+
+    def __init__(self, package, version, known, known_versions, data, message):
+        self.package = package
+        self.version = version
+        self.known = known
+        self.known_versions = known_versions
+        self.data = data
+        self.message = message
+
+    def get_current(self, package):
+        with open('known_versions.json','r') as verfile:
+            known_versions = json.load(verfile)
+            known = str(known_versions[package][-1])
+        return known
+        return known_versions
+
+    def strain_version(self, verstring, verpos, endpos):
+        start = verstring.find(verpos, 0)
+        end = verstring.find(endpos, 0)
+        sievelen = len(verpos)
+        version = str(verstring[start+sievelen:end])
+        return version
+
+    def append_known(self, package, version, known_versions):
+        if version not in known_versions[package]:
+            known_versions[package].append(unicode(version))
+            with open('known_versions.json','w') as verfile:
+                verlist = json.dumps(known_versions, indent=4, sort_keys=True)
+                verfile.write(verlist)
+        else:
+            print(package + 'version ' + version + ' already known.')
+
+class G870A(Update):
+    package = 'G870A'
+
+    data = requests.get('https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport', headers={'Accept': 'application/json'}).json()
+
+    url =  'https://xdmd.sl.attcompute.com/agents/42998/1488/SS-' + previous_version + '-to-' + version[7:] + '-UP'
+
+class qBittorrent(Update):
+    package = 'qBittorrent'
+    url = 'https://sourceforge.net/projects/qbittorrent/files/qbittorrent/qbittorrent-' + version[0:] + '/qbittorrent-' + version[0:] + '.tar.gz/download'
+
+class KeePassXC(Update):
+    package = 'KeePassXC'
+    url = str(data.item.guid.string)
+
 def get_current(package):
     global known_versions
     global known
