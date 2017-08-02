@@ -27,7 +27,8 @@ def do_update():
     updates = [
     G870A(),
     qBittorrent(),
-    KeePassXC()
+    KeePassXC(),
+    Atom()
     ]
 
     for update in updates:
@@ -156,13 +157,30 @@ class KeePassXC(Update):
         version = self.strain_version(self.verstring, 'KeePassXC ', ' released')
         return version
 
+class Atom(Update):
+
+    def __init__(self):
+        self.package = 'Atom'
+        self.data = json.loads(requests.get('https://api.github.com/repos/atom/atom/releases/latest').text)
+        self.known = self.get_current(self.package)
+        self.known_versions = get_known_versions()[self.package]
+        self.version = self.get_version()
+        self.url = self.build_url()
+
+    def get_version(self):
+        self.version = str(self.data['name'])
+        return version
+
+    def build_url(self):
+        url = 'https://github.com/atom/atom/releases/tag/' + 'v' + self.get_version()
+        return url
+
 def main():
 
     do_update()
 
     schedule.every().day.at("00:00").do(do_update)
     schedule.every().day.at("12:00").do(do_update)
-    schedule.every().day.at("17:04").do(do_update)
 
     try:
         while True:
