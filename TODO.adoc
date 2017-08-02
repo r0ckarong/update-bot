@@ -5,9 +5,6 @@
 * Build an import module
 * Put in error handling for offline errors
 * Make version list independent of ordering
-* Build update for Atom feed
-** https://github.com/atom/atom/releases.atom
-** xml.etree.ElementTree
 
 == DONE
 
@@ -15,3 +12,7 @@
 * Update usage of package name to build strings
 * Update known versions to reflect package usage
 * Refactor to classes
+* Build update for Atom feed
+** https://github.com/atom/atom/releases.atom
+** [line-trough]#xml.etree.ElementTree#
+** Used GitHub API and JSON instead
