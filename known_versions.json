@@ -1,15 +1,15 @@
 {
-    "g870a": [
+    "G870A": [
         "G870AUCS2DPK5",
         "G870AUCS2DPK7",
         "G870AUCS2DQD1"
     ],
-    "qbt": [
+    "qBittorrent": [
         "v3.3.12",
         "v3.3.13",
         "v3.3.14"
     ],
-    "kpxc": [
+    "KeePassXC": [
       "2.1.4",
       "2.2.0"
     ]
