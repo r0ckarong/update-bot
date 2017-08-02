@@ -2,15 +2,16 @@
 
 == TODOS
 
-* Refactor to classes
 * Build an import module
 * Put in error handling for offline errors
 * Make version list independent of ordering
 * Build update for Atom feed
 ** https://github.com/atom/atom/releases.atom
+** xml.etree.ElementTree
 
 == DONE
 
 * Refactor updates to functions
 * Update usage of package name to build strings
 * Update known versions to reflect package usage
+* Refactor to classes
