@@ -6,7 +6,7 @@ import os
 import schedule
 import time
 
-import pdb
+# import pdb
 
 def get_known_versions():
     global known_versions
