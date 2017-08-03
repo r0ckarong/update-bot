@@ -31,8 +31,8 @@ def do_update():
         # print(update.url)
 
         if update.version not in update.known_versions:
-            update.append_known(update.package,update.version)
             notify(update.package,update.version,update.url,update.known)
+            update.append_known(update.package,update.version)
         else:
             print(update.package + ' version ' + update.version + ' is already known.')
 
@@ -52,12 +52,10 @@ def send_bot_msg(message):
     bot.sendMessage(user_id, message)
 
 def notify(package, version, url, known):
-    if version != known:
-        message = prepare_msg(package, version, url)
-        send_bot_msg(message)
-        print(message)
-    else:
-        print('No new version for ' + package)
+
+    message = prepare_msg(package, version, url)
+    send_bot_msg(message)
+    # print(message)
 
 class Update(object):
 
