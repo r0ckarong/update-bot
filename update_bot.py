@@ -86,7 +86,7 @@ class Update(object):
 
     def get_data(self, srcstring, headers=''):
         data = requests.get(srcstring, headers)
-        if response.status_code == 200:
+        if data.status_code == 200:
             return data
         else:
             return None
