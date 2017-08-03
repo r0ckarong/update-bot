@@ -36,8 +36,8 @@ def do_update():
         else:
             print(update.package + ' version ' + update.version + ' is already known.')
 
-def liquidize(html):
-    data = BeautifulSoup(html.text,'html.parser')
+def liquidize(input):
+    data = BeautifulSoup(input.text,'html.parser')
     return data
 
 def prepare_msg(package, version, url):
@@ -86,7 +86,10 @@ class Update(object):
 
     def get_data(self, srcstring, headers=''):
         data = requests.get(srcstring, headers)
-        return data
+        if response.status_code == 200:
+            return data
+        else:
+            return None
 
     def print_version(self, version):
         print(self.version)
