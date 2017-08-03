@@ -84,6 +84,10 @@ class Update(object):
             verlist = json.dumps(known_versions, indent=4, sort_keys=True)
             verfile.write(verlist)
 
+    def get_data(self, srcstring, headers=''):
+        data = requests.get(srcstring, headers)
+        return data
+
     def print_version(self, version):
         print(self.version)
 
@@ -91,7 +95,8 @@ class G870A(Update):
 
     def __init__(self):
         self.package = 'G870A'
-        self.xml = requests.get('https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport', headers={'Accept': 'application/json'}).json()['resultBody']['contentTypeProperties']['currentsoftdetails']
+        self.srcstring = 'https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport'
+        self.xml = self.get_data(self.srcstring, {'Accept': 'application/json'}).json()['resultBody']['contentTypeProperties']['currentsoftdetails']
         self.version = self.get_version()
         self.previous_version = self.get_previous()
         self.known = self.get_current(self.package)
@@ -118,7 +123,8 @@ class qBittorrent(Update):
 
     def __init__(self):
         self.package = 'qBittorrent'
-        self.verstring = str(liquidize(requests.get('https://www.qbittorrent.org/news.php')).p.string)
+        self.srcstring = 'https://www.qbittorrent.org/news.php'
+        self.verstring = (liquidize(self.get_data(self.srcstring)).p.string)
         self.version = self.get_version()
         self.known = self.get_current(self.package)
         self.known_versions = get_known_versions()[self.package]
@@ -136,7 +142,8 @@ class KeePassXC(Update):
 
     def __init__(self):
         self.package = 'KeePassXC'
-        self.html = requests.get('https://keepassxc.org/blog/feed.xml')
+        self.srcstring = 'https://keepassxc.org/blog/feed.xml'
+        self.html = self.get_data(self.srcstring)
         self.data = liquidize(self.html)
         self.verstring = str(self.data.item.title)
         self.version = self.get_version()
@@ -152,7 +159,8 @@ class Atom(Update):
 
     def __init__(self):
         self.package = 'Atom'
-        self.data = json.loads(requests.get('https://api.github.com/repos/atom/atom/releases/latest').text)
+        self.srcstring = 'https://api.github.com/repos/atom/atom/releases/latest'
+        self.data = json.loads(self.get_data(self.srcstring).text)
         self.known = self.get_current(self.package)
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
