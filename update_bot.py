@@ -69,9 +69,13 @@ class Update(object):
         self.known = str(known_versions[package][-1])
         return self.known
 
-    def strain_version(self, verstring, verpos, endpos):
+    def strain_version(self, verstring, verpos, endpos=''):
         start = verstring.find(verpos, 0)
-        end = verstring.find(endpos, 0)
+        if endpos == '':
+            end = len(verstring)
+        else:
+            end = verstring.find(endpos, 0)
+
         sievelen = len(verpos)
         self.version = str(verstring[start+sievelen:end])
         return self.version
@@ -126,20 +130,22 @@ class qBittorrent(Update):
 
     def __init__(self):
         self.package = 'qBittorrent'
-        self.srcstring = 'https://www.qbittorrent.org/news.php'
-        self.verstring = (liquidize(self.get_data(self.srcstring)).p.string)
-        self.version = self.get_version()
+        self.srcstring = 'https://api.github.com/repos/qbittorrent/qBittorrent/tags'
+        self.data = json.loads(self.get_data(self.srcstring).text)
         self.known = self.get_current(self.package)
         self.known_versions = get_known_versions()[self.package]
+        self.version = self.get_version()
         self.url = self.build_url()
 
     def get_version(self):
-        version = self.strain_version(self.verstring, 'qBittorrent ', ' was')
+        verstring = str(self.data[0]['name'])
+        version = 'v' + self.strain_version(verstring, 'release-')
         return version
 
     def build_url(self):
-        url = 'https://sourceforge.net/projects/qbittorrent/files/qbittorrent/qbittorrent-' + self.get_version()[1:] + '/qbittorrent-' + self.get_version()[1:] + '.tar.gz/download'
+        url = 'https://github.com/qbittorrent/qBittorrent/archive/release-' + self.get_version()[1:] + '.tar.gz'
         return url
+
 
 class KeePassXC(Update):
 

@@ -9,6 +9,42 @@
 *** Define function that grabs data, verifies return code
 * Make version list independent of ordering
 
+
+=== Unhandled Errors
+
+----
+Traceback (most recent call last):
+  File "update_bot.py", line 197, in <module>
+    main()
+  File "update_bot.py", line 189, in main
+    schedule.run_pending()
+  File "/usr/local/lib/python2.7/dist-packages/schedule/__init__.py", line 452, in run_pending
+    default_scheduler.run_pending()
+  File "/usr/local/lib/python2.7/dist-packages/schedule/__init__.py", line 75, in run_pending
+    self._run_job(job)
+  File "/usr/local/lib/python2.7/dist-packages/schedule/__init__.py", line 129, in _run_job
+    ret = job.run()
+  File "/usr/local/lib/python2.7/dist-packages/schedule/__init__.py", line 377, in run
+    ret = self.job_func()
+  File "update_bot.py", line 22, in do_update
+    qBittorrent(),
+  File "update_bot.py", line 130, in __init__
+    self.verstring = (liquidize(self.get_data(self.srcstring)).p.string)
+  File "update_bot.py", line 88, in get_data
+    data = requests.get(srcstring, headers)
+  File "/usr/local/lib/python2.7/dist-packages/requests/api.py", line 72, in get
+    return request('get', url, params=params, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/requests/api.py", line 58, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/requests/sessions.py", line 508, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/requests/sessions.py", line 618, in send
+    r = adapter.send(request, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/requests/adapters.py", line 508, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.qbittorrent.org', port=443): Max retries exceeded with url: /news.php (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0xb5fc73b0>: Failed to establish a new connection: [Errno 111] Connection refused',))
+----
+
 == DONE
 
 * Refactor updates to functions
@@ -19,3 +55,5 @@
 ** https://github.com/atom/atom/releases.atom
 ** [line-trough]#xml.etree.ElementTree#
 ** Used GitHub API and JSON instead
+* Switch qbittorrent release stream to GitHub
+** https://github.com/qbittorrent/qBittorrent/archive/release-3.3.15.tar.gz
