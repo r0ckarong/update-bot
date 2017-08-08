@@ -187,8 +187,7 @@ def main():
 
     do_update()
 
-    schedule.every().day.at("00:00").do(do_update)
-    schedule.every().day.at("12:00").do(do_update)
+    schedule.every(2).hours.do(do_update)
 
     try:
         while True:
