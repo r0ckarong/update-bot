@@ -195,7 +195,7 @@ def main():
 
             time.sleep(30)
 
-    except ConnectionError:
+    except requests.exceptions.ConnectionError:
         send_bot_msg('I could not retrieve something. Will try again later.')
         pass
 
