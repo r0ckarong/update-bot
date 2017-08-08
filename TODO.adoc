@@ -8,7 +8,8 @@
 *** https://www.digitalocean.com/community/tutorials/how-to-use-web-apis-in-python-3
 *** Define function that grabs data, verifies return code
 * Make version list independent of ordering
-
+* Refactor data calls to GraphQL / GitHub QPI v4
+** http://graphene-python.org/
 
 === Unhandled Errors
 
@@ -57,3 +58,4 @@ requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.qbittorrent.o
 ** Used GitHub API and JSON instead
 * Switch qbittorrent release stream to GitHub
 ** https://github.com/qbittorrent/qBittorrent/archive/release-3.3.15.tar.gz
+* Switch KeePassXC to GitHub release stream

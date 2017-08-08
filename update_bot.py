@@ -69,6 +69,9 @@ class Update(object):
         self.known = str(known_versions[package][-1])
         return self.known
 
+    # def get_github_release(self, package, srcstring):
+
+
     def strain_version(self, verstring, verpos, endpos=''):
         start = verstring.find(verpos, 0)
         if endpos == '':
@@ -151,18 +154,20 @@ class KeePassXC(Update):
 
     def __init__(self):
         self.package = 'KeePassXC'
-        self.srcstring = 'https://keepassxc.org/blog/feed.xml'
-        self.html = self.get_data(self.srcstring)
-        self.data = liquidize(self.html)
-        self.verstring = str(self.data.item.title)
-        self.version = self.get_version()
+        self.srcstring = 'https://api.github.com/repos/keepassxreboot/keepassxc/releases'
+        self.data = json.loads(self.get_data(self.srcstring).text)
         self.known = self.get_current(self.package)
         self.known_versions = get_known_versions()[self.package]
-        self.url = self.data.item.guid.string
+        self.version = self.get_version()
+        self.url = self.build_url()
 
     def get_version(self):
-        version = self.strain_version(self.verstring, 'KeePassXC ', ' released')
+        version = str(self.data[0]['tag_name'])
         return version
+
+    def build_url(self):
+        url = 'https://github.com/keepassxreboot/keepassxc/releases/tag/' + self.version
+        return url
 
 class Atom(Update):
 
