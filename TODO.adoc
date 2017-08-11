@@ -10,6 +10,7 @@
 * Make version list independent of ordering
 * Refactor data calls to GraphQL / GitHub QPI v4
 ** http://graphene-python.org/
+* Refactor Update classes for duplicated initialization
 
 === Unhandled Errors
 
