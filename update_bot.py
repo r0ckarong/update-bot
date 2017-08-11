@@ -21,7 +21,9 @@ def do_update():
     G870A(),
     qBittorrent(),
     KeePassXC(),
-    Atom()
+    Atom(),
+    AsciidoctorPDF(),
+    AsciiBinder()
     ]
 
     for update in updates:
@@ -34,7 +36,7 @@ def do_update():
             notify(update.package,update.version,update.url,update.known)
             update.append_known(update.package,update.version)
         else:
-            print(update.package + ' version ' + update.version + ' is already known.')
+            print(update.package + ' version "' + update.version + '" is already known.')
 
 def liquidize(input):
     data = BeautifulSoup(input.text,'html.parser')
@@ -59,7 +61,7 @@ def notify(package, version, url, known):
 
 class Update(object):
 
-    def __init__(self, package, version, known_versions, known):
+    def __init__(self):
         self.package = package
         self.version = version
         self.known_versions = get_known_versions()[package]
@@ -187,6 +189,43 @@ class Atom(Update):
     def build_url(self):
         url = 'https://github.com/atom/atom/releases/tag/' + 'v' + self.get_version()
         return url
+
+class AsciidoctorPDF(Update):
+    def __init__(self):
+        self.package = 'Asciidoctor-PDF'
+        self.srcstring = 'https://api.github.com/repos/asciidoctor/asciidoctor-pdf/releases'
+        self.data = json.loads(self.get_data(self.srcstring).text)
+        self.known = self.get_current(self.package)
+        self.known_versions = get_known_versions()[self.package]
+        self.version = self.get_version()
+        self.url = self.build_url()
+
+    def get_version(self):
+        version = str(self.data[0]['name'])
+        return version
+
+    def build_url(self):
+        url = str(self.data[0]['html_url'])
+        return url
+
+class AsciiBinder(Update):
+    def __init__(self):
+        self.package = 'AsciiBinder'
+        self.srcstring = 'https://api.github.com/repos/redhataccess/ascii_binder/tags'
+        self.data = json.loads(self.get_data(self.srcstring).text)
+        self.known = self.get_current(self.package)
+        self.known_versions = get_known_versions()[self.package]
+        self.version = self.get_version()
+        self.url = self.build_url()
+
+    def get_version(self):
+        version = str(self.data[0]['name'])
+        return version
+
+    def build_url(self):
+        url = str(self.data[0]['tarball_url'])
+        return url
+
 
 def main():
 
