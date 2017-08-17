@@ -11,6 +11,10 @@
 * Refactor data calls to GraphQL / GitHub QPI v4
 ** http://graphene-python.org/
 * Refactor Update classes for duplicated initialization
+* Get and store known versions in gist
+** https://gist.github.com/r0ckarong/7c4b6cc96d99d4030a78f2066e758e2f
+* Add dead man switch
+** At midnight ":bell: All's well, all's well. :bell:"
 
 === Unhandled Errors
 
