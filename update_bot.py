@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from subprocess import call
 import requests
 import json
 import telepot
@@ -8,13 +9,26 @@ import time
 
 # import pdb
 
+gist_id = str(os.environ['VERSION_GIST'])
+version_file = 'known_versions.json'
+
+def get_version_file():
+    with open(version_file,'w') as verfile:
+        call(['gist', '-r', gist_id], stdout=verfile)
+
 def get_known_versions():
     global known_versions
-    with open('known_versions.json','r') as verfile:
+    with open(version_file,'r') as verfile:
         known_versions = json.load(verfile)
     return known_versions
 
+def update_known_versions(package, version):
+    with open(os.devnull, 'w') as FNULL:
+        call(['gist', '-r', gist_id, version_file], stdout=FNULL)
+    print('Updated gist file with version "' + version + '" for ' + package)
+
 def do_update():
+    get_version_file()
     get_known_versions()
 
     updates = [
@@ -92,6 +106,7 @@ class Update(object):
         with open('known_versions.json','w') as verfile:
             verlist = json.dumps(known_versions, indent=4, sort_keys=True)
             verfile.write(verlist)
+        update_known_versions(package, version)
 
     def get_data(self, srcstring, headers=''):
         data = requests.get(srcstring, headers)
