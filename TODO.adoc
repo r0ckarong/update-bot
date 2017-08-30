@@ -51,6 +51,82 @@ Traceback (most recent call last):
 requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.qbittorrent.org', port=443): Max retries exceeded with url: /news.php (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0xb5fc73b0>: Failed to establish a new connection: [Errno 111] Connection refused',))
 ----
 
+----
+File "update_bot.py", line 59, in notify
+  send_bot_msg(message)
+File "update_bot.py", line 54, in send_bot_msg
+  bot.sendMessage(user_id, message)
+File "/usr/local/lib/python2.7/dist-packages/telepot/__init__.py", line 456, in sendMessage
+  return self._api_request('sendMessage', _rectify(p))
+File "/usr/local/lib/python2.7/dist-packages/telepot/__init__.py", line 434, in _api_request
+  return api.request((self._token, method, params, files), **kwargs)
+File "/usr/local/lib/python2.7/dist-packages/telepot/api.py", line 130, in request
+  r = fn(*args, **kwargs)  # `fn` must be thread-safe
+File "/usr/local/lib/python2.7/dist-packages/urllib3/request.py", line 148, in request_encode_body
+  return self.urlopen(method, url, **extra_kw)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/poolmanager.py", line 321, in urlopen
+  response = conn.urlopen(method, u.request_uri, **kw)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/connectionpool.py", line 639, in urlopen
+  _stacktrace=sys.exc_info()[2])
+File "/usr/local/lib/python2.7/dist-packages/urllib3/util/retry.py", line 357, in increment
+  raise six.reraise(type(error), error, _stacktrace)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/connectionpool.py", line 601, in urlopen
+  chunked=chunked)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/connectionpool.py", line 380, in _make_request
+  httplib_response = conn.getresponse(buffering=True)
+File "/usr/lib/python2.7/httplib.py", line 1111, in getresponse
+  response.begin()
+File "/usr/lib/python2.7/httplib.py", line 444, in begin
+  version, status, reason = self._read_status()
+File "/usr/lib/python2.7/httplib.py", line 400, in _read_status
+  line = self.fp.readline(_MAXLINE + 1)
+File "/usr/lib/python2.7/socket.py", line 476, in readline
+  data = self._sock.recv(self._rbufsize)
+File "/usr/lib/python2.7/ssl.py", line 714, in recv
+  return self.read(buflen)
+File "/usr/lib/python2.7/ssl.py", line 608, in read
+  v = self._sslobj.read(len or 1024)
+urllib3.exceptions.ProtocolError: ('Connection aborted.', error(104, 'Connection reset by peer'))
+----
+
+----
+File "update_bot.py", line 73, in notify
+  send_bot_msg(message)
+File "update_bot.py", line 68, in send_bot_msg
+  bot.sendMessage(user_id, message)
+File "/usr/local/lib/python2.7/dist-packages/telepot/__init__.py", line 456, in sendMessage
+  return self._api_request('sendMessage', _rectify(p))
+File "/usr/local/lib/python2.7/dist-packages/telepot/__init__.py", line 434, in _api_request
+  return api.request((self._token, method, params, files), **kwargs)
+File "/usr/local/lib/python2.7/dist-packages/telepot/api.py", line 130, in request
+  r = fn(*args, **kwargs)  # `fn` must be thread-safe
+File "/usr/local/lib/python2.7/dist-packages/urllib3/request.py", line 148, in request_encode_body
+  return self.urlopen(method, url, **extra_kw)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/poolmanager.py", line 321, in urlopen
+  response = conn.urlopen(method, u.request_uri, **kw)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/connectionpool.py", line 639, in urlopen
+  _stacktrace=sys.exc_info()[2])
+File "/usr/local/lib/python2.7/dist-packages/urllib3/util/retry.py", line 357, in increment
+  raise six.reraise(type(error), error, _stacktrace)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/connectionpool.py", line 601, in urlopen
+  chunked=chunked)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/connectionpool.py", line 380, in _make_request
+  httplib_response = conn.getresponse(buffering=True)
+File "/usr/lib/python2.7/httplib.py", line 1121, in getresponse
+  response.begin()
+File "/usr/lib/python2.7/httplib.py", line 438, in begin
+  version, status, reason = self._read_status()
+File "/usr/lib/python2.7/httplib.py", line 394, in _read_status
+  line = self.fp.readline(_MAXLINE + 1)
+File "/usr/lib/python2.7/socket.py", line 480, in readline
+  data = self._sock.recv(self._rbufsize)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/contrib/pyopenssl.py", line 274, in recv
+  return self.recv(*args, **kwargs)
+File "/usr/local/lib/python2.7/dist-packages/urllib3/contrib/pyopenssl.py", line 263, in recv
+  raise SocketError(str(e))
+urllib3.exceptions.ProtocolError: ('Connection aborted.', error("(104, 'ECONNRESET')",))
+----
+
 == DONE
 
 * Refactor updates to functions
