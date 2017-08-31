@@ -127,6 +127,34 @@ File "/usr/local/lib/python2.7/dist-packages/urllib3/contrib/pyopenssl.py", line
 urllib3.exceptions.ProtocolError: ('Connection aborted.', error("(104, 'ECONNRESET')",))
 ----
 
+.Data malformed for G870A update, missing currentsoftdetails
+----
+G870A version "G870AUCS2DQD1" is already known.
+qBittorrent version "3.3.15" is already known.
+KeePassXC version "2.2.0" is already known.
+Atom version "1.19.4" is already known.
+Asciidoctor-PDF version "v1.5.0 Alpha 16" is already known.
+AsciiBinder version "v0.1.10.1" is already known.
+Traceback (most recent call last):
+  File "update_bot.py", line 265, in <module>
+    main()
+  File "update_bot.py", line 253, in main
+    schedule.run_pending()
+  File "/usr/local/lib/python2.7/dist-packages/schedule/__init__.py", line 452, in run_pending
+    default_scheduler.run_pending()
+  File "/usr/local/lib/python2.7/dist-packages/schedule/__init__.py", line 75, in run_pending
+    self._run_job(job)
+  File "/usr/local/lib/python2.7/dist-packages/schedule/__init__.py", line 129, in _run_job
+    ret = job.run()
+  File "/usr/local/lib/python2.7/dist-packages/schedule/__init__.py", line 377, in run
+    ret = self.job_func()
+  File "update_bot.py", line 35, in do_update
+    G870A(),
+  File "update_bot.py", line 126, in __init__
+    self.xml = self.get_data(self.srcstring, {'Accept': 'application/json'}).json()['resultBody']['contentTypeProperties']['currentsoftdetails']
+KeyError: 'currentsoftdetails'
+----
+
 == DONE
 
 * Refactor updates to functions
