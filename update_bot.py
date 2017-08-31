@@ -254,23 +254,23 @@ def main():
 
             time.sleep(30)
 
-    except:
-        send_bot_msg('Update bot has crashed!')
+    except socket.error as serr:
+        if serr.errno == 104:
+            print("Error retrieving data from source URL.")
+            time.sleep(300)
+            pass
+        else:
+            raise serr
 
-    # except socket.error as serr:
-    #     if serr.errno == 104:
-    #         print("Error retrieving data from source URL.")
-    #         time.sleep(300)
-    #         pass
-    #     else:
-    #         raise serr
-    #
-    # except requests.exceptions.ConnectionError:
-    #     send_bot_msg('I could not retrieve something. Will try again later.')
-    #     pass
+    except requests.exceptions.ConnectionError:
+        send_bot_msg('I could not retrieve something. Will try again later.')
+        pass
 
     except KeyboardInterrupt:
         print "Terminated!"
+
+    except:
+        send_bot_msg('Update bot has crashed!')
 
 if __name__ == "__main__":
     main()
