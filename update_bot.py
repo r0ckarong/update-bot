@@ -24,7 +24,7 @@ def get_known_versions():
 
 def update_known_versions(package, version):
     with open(os.devnull, 'w') as FNULL:
-        call(['gist', '-r', gist_id, version_file], stdout=FNULL)
+        call(['gist', '-u', gist_id, version_file], stdout=FNULL)
     print('Updated gist file with version "' + version + '" for ' + package)
 
 def do_update():
