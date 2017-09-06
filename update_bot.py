@@ -6,8 +6,12 @@ import telepot
 import os
 import schedule
 import time
-
+import logging
 # import pdb
+
+# Set up logging
+logging.basicConfig(filename='updater.log',level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 gist_id = str(os.environ['VERSION_GIST'])
 version_file = 'known_versions.json'
@@ -87,7 +91,6 @@ class Update(object):
 
     # def get_github_release(self, package, srcstring):
 
-
     def strain_version(self, verstring, verpos, endpos=''):
         start = verstring.find(verpos, 0)
         if endpos == '':
@@ -129,6 +132,7 @@ class G870A(Update):
         self.known = self.get_current(self.package)
         self.known_versions = get_known_versions()[self.package]
         self.url = self.build_url()
+        logging.debug('Performing update for ' + self.package)
 
     def get_version(self):
         pos = self.xml.find("Baseband version:",0)
@@ -156,6 +160,7 @@ class qBittorrent(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
+        logging.debug('Performing update for ' + self.package)
 
     def get_version(self):
         verstring = str(self.data[0]['name'])
@@ -165,7 +170,6 @@ class qBittorrent(Update):
     def build_url(self):
         url = 'https://github.com/qbittorrent/qBittorrent/archive/release-' + self.get_version()[1:] + '.tar.gz'
         return url
-
 
 class KeePassXC(Update):
 
@@ -177,6 +181,7 @@ class KeePassXC(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
+        logging.debug('Performing update for ' + self.package)
 
     def get_version(self):
         version = str(self.data[0]['tag_name'])
@@ -196,6 +201,7 @@ class Atom(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
+        logging.debug('Performing update for ' + self.package)
 
     def get_version(self):
         version = str(self.data['name'])
@@ -206,6 +212,7 @@ class Atom(Update):
         return url
 
 class AsciidoctorPDF(Update):
+
     def __init__(self):
         self.package = 'Asciidoctor-PDF'
         self.srcstring = 'https://api.github.com/repos/asciidoctor/asciidoctor-pdf/releases'
@@ -214,6 +221,7 @@ class AsciidoctorPDF(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
+        logging.debug('Performing update for ' + self.package)
 
     def get_version(self):
         version = str(self.data[0]['name'])
@@ -224,6 +232,7 @@ class AsciidoctorPDF(Update):
         return url
 
 class AsciiBinder(Update):
+
     def __init__(self):
         self.package = 'AsciiBinder'
         self.srcstring = 'https://api.github.com/repos/redhataccess/ascii_binder/tags'
@@ -232,6 +241,7 @@ class AsciiBinder(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
+        logging.debug('Performing update for ' + self.package)
 
     def get_version(self):
         version = str(self.data[0]['name'])
@@ -255,6 +265,7 @@ def main():
             time.sleep(30)
 
     except requests.exceptions.ConnectionError:
+        logging.error('ConnectionError occurred', exc_info=True)
         send_bot_msg('I could not retrieve something. Will try again later.')
         pass
 
@@ -262,6 +273,7 @@ def main():
         print "Terminated!"
 
     except:
+        logger.error('Something has broken.', exc_info=True)
         send_bot_msg('Update bot has crashed!')
 
 if __name__ == "__main__":
