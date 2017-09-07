@@ -36,7 +36,7 @@ def do_update():
     get_known_versions()
 
     updates = [
-    G870A(),
+    # G870A(),
     qBittorrent(),
     KeePassXC(),
     Atom(),
