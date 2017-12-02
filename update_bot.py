@@ -38,6 +38,7 @@ def do_update():
     updates = [
     # G870A(),
     qBittorrent(),
+    libtorrent(),
     KeePassXC(),
     Atom(),
     AsciidoctorPDF(),
@@ -169,6 +170,27 @@ class qBittorrent(Update):
 
     def build_url(self):
         url = 'https://github.com/qbittorrent/qBittorrent/archive/release-' + self.get_version()[1:] + '.tar.gz'
+        return url
+
+class libtorrent(Update):
+
+    def __init__(self):
+        self.package = 'libtorrent'
+        self.srcstring = 'https://api.github.com/repos/arvidn/libtorrent/releases'
+        self.data = json.loads(self.get_data(self.srcstring).text)
+        self.known = self.get_current(self.package)
+        self.known_versions = get_known_versions()[self.package]
+        self.version = self.get_version()
+        self.url = self.build_url()
+        logging.debug('Performing update for ' + self.package)
+
+    def get_version(self):
+        verstring = str(self.data[0]['name'])
+        version = 'v' + self.strain_version(verstring, 'libtorrent-')
+        return version
+
+    def build_url(self):
+        url = 'https://github.com/arvidn/libtorrent/archive/libtorrent-' + self.get_version()[1:] + '.tar.gz'
         return url
 
 class KeePassXC(Update):
