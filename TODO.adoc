@@ -11,9 +11,12 @@
 * Refactor data calls to GraphQL / GitHub QPI v4
 ** http://graphene-python.org/
 * Refactor Update classes for duplicated initialization
-
 * Add dead man switch
 ** At midnight ":bell: All's well, all's well. :bell:"
+* Refactor get_version to be handled only once inside the Update Class
+** Started on `refactor-get_version branch`
+* Add GitHub auth to forgo rate limits
+*
 
 === Unhandled Errors
 
