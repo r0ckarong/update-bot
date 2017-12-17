@@ -4,14 +4,27 @@ import requests
 import json
 import telepot
 import os
+import sys
 import schedule
 import time
 import logging
 # import pdb
 
 # Set up logging
-logging.basicConfig(filename='updater.log',level=logging.INFO)
-logger = logging.getLogger(__name__)
+def setup_custom_logger(name):
+    formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
+                                  datefmt='%Y-%m-%d %H:%M:%S')
+    handler = logging.FileHandler('update-bot.log', mode='a')
+    handler.setFormatter(formatter)
+    #screen_handler = logging.StreamHandler(stream=sys.stdout)
+    #screen_handler.setFormatter(formatter)
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
+    #logger.addHandler(screen_handler)
+    return logger
+
+logger = setup_custom_logger('update-bot')
 
 gist_id = str(os.environ['VERSION_GIST'])
 version_file = 'known_versions.json'
@@ -33,7 +46,7 @@ def update_known_versions(package, version):
 
 def do_update():
     get_version_file()
-    get_known_versions()
+    # get_known_versions()
 
     updates = [
     # G870A(),
@@ -55,6 +68,7 @@ def do_update():
             notify(update.package,update.version,update.url,update.known)
             update.append_known(update.package,update.version)
         else:
+            logger.info(update.package + ' version "' + update.version + '" is already known.')
             print(update.package + ' version "' + update.version + '" is already known.')
 
 def liquidize(input):
@@ -92,6 +106,23 @@ class Update(object):
 
     # def get_github_release(self, package, srcstring):
 
+    def get_version(self):
+        if self.package == 'qBittorrent':
+            verstring = str(self.data[0]['name'])
+            version = 'v' + self.strain_version(verstring, 'release-')
+        elif self.package == 'libtorrent':
+            verstring = str(self.data[0]['name'])
+            version = 'v' + self.strain_version(verstring, 'libtorrent-')
+        elif self.package == 'KeePassXC':
+            version = str(self.data[0]['tag_name'])
+        elif self.package == 'Atom':
+            version = str(self.data['name'])
+        elif self.package == 'Asciidoctor-PDF':
+            version = str(self.data[0]['name'])
+        elif self.package == 'AsciiBinder':
+            version = str(self.data[0]['name'])
+        return version
+
     def strain_version(self, verstring, verpos, endpos=''):
         start = verstring.find(verpos, 0)
         if endpos == '':
@@ -128,18 +159,18 @@ class G870A(Update):
         self.package = 'G870A'
         self.srcstring = 'https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport'
         self.xml = self.get_data(self.srcstring, {'Accept': 'application/json'}).json()['resultBody']['contentTypeProperties']['currentsoftdetails']
-        self.version = self.get_version()
+        self.version = self.get_version(self.data)
         self.previous_version = self.get_previous()
         self.known = self.get_current(self.package)
         self.known_versions = get_known_versions()[self.package]
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        logger.debug('Performing update for ' + self.package)
 
-    def get_version(self):
-        pos = self.xml.find("Baseband version:",0)
-        verpos = self.xml.find("G870A",pos+17,pos+57)
-        version = self.xml[verpos:verpos+13]
-        return version
+    # def get_version(self):
+    #     pos = self.xml.find("Baseband version:",0)
+    #     verpos = self.xml.find("G870A",pos+17,pos+57)
+    #     version = self.xml[verpos:verpos+13]
+    #     return version
 
     def get_previous(self):
         prev = self.xml.rfind("Previous versions required:",0)
@@ -159,14 +190,14 @@ class qBittorrent(Update):
         self.data = json.loads(self.get_data(self.srcstring).text)
         self.known = self.get_current(self.package)
         self.known_versions = get_known_versions()[self.package]
-        self.version = self.get_version()
+        self.version = self.get_version(data)
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        logger.debug('Performing update for ' + self.package)
 
-    def get_version(self):
-        verstring = str(self.data[0]['name'])
-        version = 'v' + self.strain_version(verstring, 'release-')
-        return version
+    # def get_version(self):
+        # verstring = str(self.data[0]['name'])
+        # version = 'v' + self.strain_version(verstring, 'release-')
+        # return version
 
     def build_url(self):
         url = 'https://github.com/qbittorrent/qBittorrent/archive/release-' + self.get_version()[1:] + '.tar.gz'
@@ -182,12 +213,12 @@ class libtorrent(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        logger.debug('Performing update for ' + self.package)
 
-    def get_version(self):
-        verstring = str(self.data[0]['name'])
-        version = 'v' + self.strain_version(verstring, 'libtorrent-')
-        return version
+    # def get_version(self):
+    #     verstring = str(self.data[0]['name'])
+    #     version = 'v' + self.strain_version(verstring, 'libtorrent-')
+    #     return version
 
     def build_url(self):
         url = 'https://github.com/arvidn/libtorrent/archive/libtorrent-' + self.get_version()[1:] + '.tar.gz'
@@ -203,11 +234,11 @@ class KeePassXC(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        logger.debug('Performing update for ' + self.package)
 
-    def get_version(self):
-        version = str(self.data[0]['tag_name'])
-        return version
+    # def get_version(self):
+    #     version = str(self.data[0]['tag_name'])
+    #     return version
 
     def build_url(self):
         url = 'https://github.com/keepassxreboot/keepassxc/releases/tag/' + self.version
@@ -223,11 +254,11 @@ class Atom(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        logger.debug('Performing update for ' + self.package)
 
-    def get_version(self):
-        version = str(self.data['name'])
-        return version
+    # def get_version(self):
+    #     version = str(self.data['name'])
+    #     return version
 
     def build_url(self):
         url = 'https://github.com/atom/atom/releases/tag/' + 'v' + self.get_version()
@@ -243,11 +274,11 @@ class AsciidoctorPDF(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        logger.debug('Performing update for ' + self.package)
 
-    def get_version(self):
-        version = str(self.data[0]['name'])
-        return version
+    # def get_version(self):
+    #     version = str(self.data[0]['name'])
+    #     return version
 
     def build_url(self):
         url = str(self.data[0]['html_url'])
@@ -263,11 +294,11 @@ class AsciiBinder(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        logger.debug('Performing update for ' + self.package)
 
-    def get_version(self):
-        version = str(self.data[0]['name'])
-        return version
+    # def get_version(self):
+    #     version = str(self.data[0]['name'])
+    #     return version
 
     def build_url(self):
         url = str(self.data[0]['tarball_url'])
@@ -287,7 +318,7 @@ def main():
             time.sleep(30)
 
     except requests.exceptions.ConnectionError:
-        logging.error('ConnectionError occurred', exc_info=True)
+        logger.error('ConnectionError occurred', exc_info=True)
         send_bot_msg('I could not retrieve something. Will try again later.')
         pass
 
