@@ -49,7 +49,6 @@ def do_update():
     # get_known_versions()
 
     updates = [
-    # G870A(),
     qBittorrent(),
     libtorrent(),
     KeePassXC(),
@@ -152,35 +151,6 @@ class Update(object):
 
     def print_version(self, version):
         print(self.version)
-
-class G870A(Update):
-
-    def __init__(self):
-        self.package = 'G870A'
-        self.srcstring = 'https://services.att.com/kmservices/v2/contents/KM1126238?app-id=esupport'
-        self.xml = self.get_data(self.srcstring, {'Accept': 'application/json'}).json()['resultBody']['contentTypeProperties']['currentsoftdetails']
-        self.version = self.get_version(self.data)
-        self.previous_version = self.get_previous()
-        self.known = self.get_current(self.package)
-        self.known_versions = get_known_versions()[self.package]
-        self.url = self.build_url()
-        logger.debug('Performing update for ' + self.package)
-
-    # def get_version(self):
-    #     pos = self.xml.find("Baseband version:",0)
-    #     verpos = self.xml.find("G870A",pos+17,pos+57)
-    #     version = self.xml[verpos:verpos+13]
-    #     return version
-
-    def get_previous(self):
-        prev = self.xml.rfind("Previous versions required:",0)
-        prev_ver = self.xml.find("G870A",prev+27)
-        previous_version = self.xml[prev_ver:prev_ver+13]
-        return previous_version
-
-    def build_url(self):
-        url = 'https://xdmd.sl.attcompute.com/agents/42998/1488/SS-' + self.get_previous() + '-to-' + self.get_version()[7:] + '-UP'
-        return url
 
 class qBittorrent(Update):
 
