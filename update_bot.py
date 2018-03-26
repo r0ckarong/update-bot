@@ -276,6 +276,8 @@ class AsciiBinder(Update):
 
 def main():
 
+    send_bot_msg("All's well, started up fine.")
+
     do_update()
 
     schedule.every(2).hours.do(do_update)
