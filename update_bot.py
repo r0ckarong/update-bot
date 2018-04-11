@@ -29,7 +29,7 @@ def get_known_versions():
 def update_known_versions(package, version):
     with open(os.devnull, 'w') as FNULL:
         call(['gist', '-u', gist_id, version_file], stdout=FNULL)
-    print('Updated gist file with version "' + version + '" for ' + package)
+    print(('Updated gist file with version "' + version + '" for ' + package))
 
 def do_update():
     get_version_file()
@@ -55,7 +55,7 @@ def do_update():
             notify(update.package,update.version,update.url,update.known)
             update.append_known(update.package,update.version)
         else:
-            print(update.package + ' version "' + update.version + '" is already known.')
+            print((update.package + ' version "' + update.version + '" is already known.'))
 
 def liquidize(input):
     data = BeautifulSoup(input.text,'html.parser')
@@ -104,9 +104,9 @@ class Update(object):
         return self.version
 
     def append_known(self, package, version):
-        self.known_versions.append(unicode(version))
+        self.known_versions.append(str(version))
         known_versions[package] = self.known_versions
-        print ('Added ' + package + ' version ' + version + ' to list.')
+        print(('Added ' + package + ' version ' + version + ' to list.'))
         with open('known_versions.json','w') as verfile:
             verlist = json.dumps(known_versions, indent=4, sort_keys=True)
             verfile.write(verlist)
@@ -120,7 +120,7 @@ class Update(object):
             return None
 
     def print_version(self, version):
-        print(self.version)
+        print((self.version))
 
 class G870A(Update):
 
@@ -292,7 +292,7 @@ def main():
         pass
 
     except KeyboardInterrupt:
-        print "Terminated!"
+        print("Terminated!")
 
     except:
         logger.error('Something has broken.', exc_info=True)
