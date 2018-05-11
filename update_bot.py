@@ -90,6 +90,9 @@ class Update(object):
         self.known = str(known_versions[package][-1])
         return self.known
 
+    def write_log(self, package):
+        logging.debug('Performing update for ' + self.package)
+
     # def get_github_release(self, package, srcstring):
 
     def strain_version(self, verstring, verpos, endpos=''):
@@ -133,7 +136,7 @@ class G870A(Update):
         self.known = self.get_current(self.package)
         self.known_versions = get_known_versions()[self.package]
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        self.write_log(self.package)
 
     def get_version(self):
         pos = self.xml.find("Baseband version:",0)
@@ -161,7 +164,7 @@ class qBittorrent(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        self.write_log(self.package)
 
     def get_version(self):
         verstring = str(self.data[0]['name'])
@@ -182,7 +185,7 @@ class libtorrent(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        self.write_log(self.package)
 
     def get_version(self):
         verstring = str(self.data[0]['name'])
@@ -203,7 +206,7 @@ class KeePassXC(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        self.write_log(self.package)
 
     def get_version(self):
         version = str(self.data[0]['tag_name'])
@@ -223,7 +226,7 @@ class Atom(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        self.write_log(self.package)
 
     def get_version(self):
         version = str(self.data['name'])
@@ -243,7 +246,7 @@ class AsciidoctorPDF(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        self.write_log(self.package)
 
     def get_version(self):
         version = str(self.data[0]['name'])
@@ -263,7 +266,7 @@ class AsciiBinder(Update):
         self.known_versions = get_known_versions()[self.package]
         self.version = self.get_version()
         self.url = self.build_url()
-        logging.debug('Performing update for ' + self.package)
+        self.write_log(self.package)
 
     def get_version(self):
         version = str(self.data[0]['name'])
@@ -294,7 +297,7 @@ def main():
         pass
 
     except KeyboardInterrupt:
-        print "Terminated!"
+        print("Terminated!")
 
     except:
         logger.error('Something has broken.', exc_info=True)
