@@ -299,6 +299,9 @@ def main():
     except KeyboardInterrupt:
         print("Terminated!")
 
+    except (NameError, RuntimeError, TypeError):
+        print("There was a problem with the code, quitting.")
+
     except:
         logger.error('Something has broken.', exc_info=True)
         send_bot_msg('Update bot has crashed!')
