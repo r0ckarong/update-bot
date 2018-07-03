@@ -1,5 +1,16 @@
 = TODO List
 
+== Hackweek 2018 Goals
+
+* Refactor code to remove duplication
+* Add documentation for calls
+* Import packages to watch from external JSON file (project name, URL, type for match [release or name])
+* Update version file from gist without external ruby gist tool
+** probably use https://pypi.org/project/python-gist/
+* Error handling for the common errors
+** Deal with lost connections and timeouts
+
+
 == TODOS
 
 * Build an import module
