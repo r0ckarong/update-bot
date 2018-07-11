@@ -52,9 +52,21 @@ def get_version_gist():
         logger.exception("Retrieving version info failed. Connection problem?")
 
 
-def get_package_list():
+def get_package_gist():
     """
-    Reads the package list in the directory
+    Retrieves the current package information gist from GitHub
+    """
+    try:
+        global package_list
+        logger.info("Retrieving version info from Gist")
+        package_list = subprocess.check_output(['gist', 'content', gist_id, 'packages.json'], universal_newlines=True)
+        #print(package_list)
+    except CalledProcessError as error:
+        logger.exception("Retrieving version info failed. Connection problem?")
+
+def read__local_package_list():
+    """
+    Reads the package list file in the directory
     """
     global package_list
     if os.path.exists(pkglistpath):
@@ -66,8 +78,7 @@ def get_package_list():
         print('File not found.')
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), pkglistpath)
 
-
-def read_package_list():
+def get_package_list():
     """
     Reads the packages list and fills the array of packages to check
     """
@@ -110,9 +121,8 @@ def print_packages():
     logger.info("There are [" + str(number) + "] packages to be checked.")
     print("There are [" + str(number) + "] packages to be checked.")
     while count < number:
-        print(count+1)
-        print(package_list['packages'][count]['name'])
-        print(package_list['packages'][count]['versions'])
+        print(str((count+1)) + ":" + package_list['packages'][count]['name'])
+        #print(package_list['packages'][count]['versions'])
         count += 1
 
 class Package(object):
@@ -170,11 +180,13 @@ class Package(object):
 def main():
     get_version_gist()
 
+    # get_package_gist()
+
     #update_version_file(known_versions)
 
     get_package_list()
 
-    read_package_list()
+    #read_local_package_list()
 
     #read_package_info(2)
 
