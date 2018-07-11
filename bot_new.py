@@ -1,3 +1,5 @@
+# Define imports and global stuff
+
 from bs4 import BeautifulSoup
 import subprocess
 import requests
@@ -7,20 +9,17 @@ import os
 import schedule
 import time
 import logging
+import errno
 import gist
 import pprint
 # import pdb
-
-pp = pprint.PrettyPrinter(indent=4)
 
 # Set up logging
 logging.basicConfig(format='%(asctime)s %(message)s', filename='updater.log', filemode='a', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-### Make this configurable
-gist_id = "dac9c4de15c7b061e7851fe1105a16d3"
 
-### Set up global information
+# Set up global information
 
 # Set up environment
 path = os.getcwd()
@@ -37,10 +36,13 @@ verfilepath = path+"/"+version_file
 package_listfile = "packages.json"
 pkglistpath = path+"/"+package_listfile
 
-"""
-Retrieves the current version gist
-"""
+# Make this configurable
+gist_id = "dac9c4de15c7b061e7851fe1105a16d3"
+
 def get_version_gist():
+    """
+    Retrieves the current version gist from GitHub
+    """
     try:
         global known_versions
         logger.info("Retrieving version info from Gist")
@@ -49,10 +51,11 @@ def get_version_gist():
     except CalledProcessError as error:
         logger.exception("Retrieving version info failed. Connection problem?")
 
-"""
-Reads the package list in the directory
-"""
+
 def get_package_list():
+    """
+    Reads the package list in the directory
+    """
     global package_list
     if os.path.exists(pkglistpath):
         with open(pkglistpath, 'r+') as pkgfile:
@@ -61,28 +64,32 @@ def get_package_list():
     else:
         logger.critical("Package list file does not exist.")
         print('File not found.')
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), pkglistpath)
 
-"""
-Reads the packages list and fills the array of packages to check
-"""
+
 def read_package_list():
+    """
+    Reads the packages list and fills the array of packages to check
+    """
     global package_list
     with open(pkglistpath) as pkglist:
         package_list = json.loads(pkglist.read())
         #print(package_list)
         #print(package_list[0]['qbittorrent']['versions'])
 
-"""
-Read the information for a specified package
-"""
+
 def read_package_info(count):
+    """
+    Read the information for a specified package
+    """
     print(json.dumps(package_list['packages'][count], indent=2, sort_keys=True))
     print(json.dumps(package_list['packages'][count]['name'], indent=2, sort_keys=True))
 
-"""
-Write the known versions information to the data file
-"""
+
 def update_version_file(known_versions):
+    """
+    Write the known versions information to the data file
+    """
     if os.path.exists(verfilepath):
         with open(verfilepath, 'r+') as verfile:
             #print(known_versions)
@@ -92,27 +99,72 @@ def update_version_file(known_versions):
             logging.warning('Known versions file does not exist. Creating a new one.')
             verfile.write(known_versions)
 
-### For debugging
-"""
-Prints the configured packages and their known version numbers
-"""
+# For debugging
+
 def print_packages():
+    """
+    Prints the configured packages and their known version numbers
+    """
     count = 0
-    numba = len(package_list['packages'])
-    print(numba)
-    while count < numba:
+    number = len(package_list['packages'])
+    logger.info("There are [" + str(number) + "] packages to be checked.")
+    print("There are [" + str(number) + "] packages to be checked.")
+    while count < number:
+        print(count+1)
         print(package_list['packages'][count]['name'])
         print(package_list['packages'][count]['versions'])
         count += 1
 
-class Update(object):
-    """
-    Reads the known versions for a package from the package list
-    """
+class Package(object):
+
+    def __init__(self):
+        """
+        Basic definition of a package
+
+        :package: The name used througout the program
+        :name: The "pretty" name of the package
+        :source: Source URL where the new package release is published
+        :download: Calculated or hardcoded URL where the binary download file is located
+        :more: Additional attributes for the package from packages.json
+        :versions: List of versions for the package
+        :type: Type of package release
+            GitHub named release = release
+            GitHub tagged release (or beta) = tag
+            Non-GitHub release or other website resource = binary
+        """
+        self.package = ''
+        self.name = ''
+        self.source = ''
+        self.download = ''
+        self.more = []
+        self.versions = []
+        self.type = ''
+
+
+# The [X] can't work, figure out how to iterate packages without writing a specific class for each one
+    def set_source():
+        self.source = package_list['packages'][X]['source']
+
+
+    def set_type():
+        """
+        Reads the type of package release to be used in discovery and URL processing
+        """
+        self.type = package_list['packages'][X]['type']
+
+
     def get_package_versions():
-        print("Nope")
+        """
+        Reads the known versions for a package from the package list
+        """
+        self.versions = package_list['packages'][X]['versions']
 
 
+# class GHRelase(Package):
+#
+# class GHTag(Package):
+#
+# class Binary(Package):
 
 
 def main():
@@ -124,7 +176,7 @@ def main():
 
     read_package_list()
 
-    read_package_info(2)
+    #read_package_info(2)
 
     print_packages()
 
