@@ -1,0 +1,116 @@
+{
+  "packages": [
+    {
+      "package": "qbittorrent",
+      "name": "qBittorrent",
+      "description": "qBittorrent release",
+      "src-url": "https: //api.github.com/repos/qbittorrent/qBittorrent/tags",
+      "type": "tag",
+      "dl-url": "https: //github.com/qbittorrent/qBittorrent/archive/release-<VERSION>.tar.gz",
+      "more": "",
+      "comment": "latest release tag",
+      "versions": [
+        "3.3.12",
+        "3.3.13",
+        "3.3.14",
+        "3.3.15",
+        "3.3.16",
+        "4.0.0",
+        "4.0.1",
+        "4.0.2",
+        "4.0.3",
+        "4.0.4",
+        "4.1.0",
+        "4.1.1"
+      ]
+    },
+    {
+      "package": "keepassxc",
+      "name": "KeePassXC",
+      "src-url": "https://api.github.com/repos/keepassxreboot/keepassxc/releases",
+      "type": "release",
+      "dl-url": "https://github.com/keepassxreboot/keepassxc/releases/tag/",
+      "more": "",
+      "comment": "latest tagged release",
+      "versions": [
+        "2.1.4",
+        "2.2.0",
+        "2.2.1",
+        "2.2.2",
+        "2.2.3",
+        "2.2.4",
+        "2.3.0-beta1",
+        "2.3.0",
+        "2.3.1",
+        "2.3.2",
+        "2.3.3"
+      ]
+    },
+    {
+      "package": "atom",
+      "name": "Atom",
+      "src-url": "https://api.github.com/repos/atom/atom/releases/latest",
+      "type": "release",
+      "dl-url": "https://github.com/atom/atom/releases/tag/v<VERSION>",
+      "more": "",
+      "comment": "latest tagged release",
+      "versions": [
+        "1.17.2",
+        "1.18.0",
+        "1.19.0",
+        "1.19.1",
+        "1.19.3",
+        "1.19.4",
+        "1.19.5",
+        "1.19.6",
+        "1.19.7",
+        "1.20.0",
+        "1.20.1",
+        "1.21.0",
+        "1.21.1",
+        "1.21.2",
+        "1.22.0",
+        "1.22.1",
+        "1.23.0",
+        "1.23.1",
+        "1.23.2",
+        "1.23.3",
+        "1.24.0",
+        "1.24.1",
+        "1.25.0",
+        "1.25.1",
+        "1.26.0",
+        "1.26.1",
+        "1.27.1",
+        "1.27.2",
+        "1.28.0",
+        "1.28.1"
+      ]
+    },
+    {
+      "package": "asciidoctor-pdf",
+      "name": "AsciidoctorPDF",
+      "src-url": "https://api.github.com/repos/asciidoctor/asciidoctor-pdf/releases",
+      "type": "release",
+      "dl-url": "",
+      "more": "",
+      "comment": "",
+      "versions": [
+        "v1.5.0 Alpha 16"
+      ]
+    },
+    {
+      "package": "a520f",
+      "name": "A520F",
+      "description": "Samsung Galaxy A5 Android 8. x Firmware DBT Region",
+      "src-url": "https: //updato.com/firmware-archive-select-model?q=A520F&rpp=15&r=DBT&v=Oreo%28Android+8.0.0%29&order=date&dir=desc&exact=1",
+      "type": "binary",
+      "dl-url": "",
+      "more": "",
+      "comment": "Last release in sorted table, version must be higher than current, dl - url must be extracted",
+      "versions": [
+        "A520FXXU4CRF1"
+      ]
+    }
+  ]
+}
