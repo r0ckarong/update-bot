@@ -32,6 +32,7 @@
 * Read Packages to check from external JSON file
 * Refactor package initialization into class
 * Refactor version stringing into two reusable functions
+* Implement option to read a single library (raw, full output, name, versions)
 
 === Unhandled Errors
 
