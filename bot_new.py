@@ -43,19 +43,6 @@ pkglistpath = path+"/"+package_listfile
 # Make this configurable
 gist_id = "dac9c4de15c7b061e7851fe1105a16d3"
 
-def get_version_gist():
-    """
-    Retrieves the current version gist from GitHub
-    """
-    try:
-        global known_versions
-        logger.info("Retrieving version info from Gist")
-        known_versions = subprocess.check_output(['gist', 'content', gist_id, 'known_versions.json'], universal_newlines=True)
-        #print(known_versions)
-    except CalledProcessError as error:
-        logger.exception("Retrieving version info failed. Connection problem?")
-
-
 def get_package_gist():
     """
     Retrieves the current package information gist from GitHub
@@ -68,7 +55,7 @@ def get_package_gist():
     except CalledProcessError as error:
         logger.exception("Retrieving version info failed. Connection problem?")
 
-def read__local_package_list():
+def read_local_package_list():
     """
     Reads the package list file in the directory
     """
@@ -97,8 +84,12 @@ def read_package_info(count):
     """
     Read the information for a specified package
     """
-    print(json.dumps(package_list['packages'][count], indent=2, sort_keys=True))
-    print(json.dumps(package_list['packages'][count]['name'], indent=2, sort_keys=True))
+    count = 0
+    while count < len(package_list):
+        packages = json.dumps(package_list['packages'])
+        print(packages[count])
+        #print(json.dumps(package_list['packages'][count], indent=2, sort_keys=True))
+        #print(json.dumps(package_list['packages'][count]['name'], indent=2, sort_keys=True))
 
 
 def update_version_file(known_versions):
@@ -121,12 +112,14 @@ def print_packages():
     Prints the configured packages and their known version numbers
     """
     count = 0
-    number = len(package_list['packages'])
+    number = len(json.loads(package_list)['packages'])
+    print(number)
     logger.info("There are [" + str(number) + "] packages to be checked.")
+    pkgs = json.loads(package_list)
     print("There are [" + str(number) + "] packages to be checked.")
     while count < number:
-        print(str((count+1)) + ":" + package_list['packages'][count]['name'])
-        #print(package_list['packages'][count]['versions'])
+        print(str((count+1)) + ":" + pkgs['packages'][count]['name'])
+        #print(pkgs['packages'][count]['versions'])
         count += 1
 
 class Package(object):
@@ -182,19 +175,17 @@ class Package(object):
 
 
 def main():
-    get_version_gist()
-
-    # get_package_gist()
+    get_package_gist()
 
     #update_version_file(known_versions)
 
-    get_package_list()
+    #get_package_list()
 
     #read_local_package_list()
 
     #read_package_info(2)
 
-    #print_packages()
+    print_packages()
 
     # print(len(package_list))
     # count = 0
