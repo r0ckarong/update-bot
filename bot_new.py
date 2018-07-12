@@ -2,6 +2,7 @@
 
 from bs4 import BeautifulSoup
 import subprocess
+from argparse import ArgumentParser
 import requests
 import json
 import telepot
@@ -17,6 +18,16 @@ import pprint
 # Set up logging
 logging.basicConfig(format='%(asctime)s %(message)s', filename='updater.log', filemode='a', level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Set up argument parsing
+parser = ArgumentParser()
+parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true", )
+#parser.add_argument('echo')
+
+# Need to figure out how to do this
+# parser.add_argument("-m", "--manual", help="Check and update only the specified package.")
+
+
 
 
 # Set up global information
@@ -190,13 +201,19 @@ def main():
 
     #read_package_info(2)
 
-    print_packages()
+    #print_packages()
 
     # print(len(package_list))
     # count = 0
     # while count < len(package_list):
     #     read_package_info(count)
     #     count += 1
+
+    args = parser.parse_args()
+
+    #print(parser.parse_args('--list'.split()))
+    if args.list == True:
+        print_packages()
 
 if __name__ == "__main__":
     main()
