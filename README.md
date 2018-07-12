@@ -1,14 +1,23 @@
-# Update Bot
+= Update Bot
 
 This script checks various software packages for new release announcements in their
-release streams and sends a message to the user via Telegram bot.
+release streams and sends a message to the user via Telegram bot API.
 
-Written (currently) in Python 3.x compliant syntax.
+Written in (currently) Python 3.6 compliant syntax
 
-## Requires:
+== Requires
 
-* Python 3.x
+NOTE: It's highly recommended to set up a virtual environment based on the `requirements.txt`-file
+
+----
+pip3 install requests schedule bs4 telepot python-gist
+----
+
+* Python 3.6.x
 * Requests 2.18.x
+* argparse
+* subprocess
+* errno
 * json
 * BeautifulSoup4
 * telepot
@@ -22,34 +31,7 @@ token: 12350117510510urtoken131591378
 editor: /usr/bin/vim
 ----
 
-
-## Package File Description
-
-JSON Array of packages with these fields:
-
-. name: Name of Package
-. description: Description of package or file
-. src-url: URL of the page to monitor for announcements
-. dl-url: Combined URL for file download
-. type: tag/release GitHub type that the information needs to get parsed for
-also 'binary' for non GitHub files
-. more: Addtional stuff needed or useful for data extraction
-. comment: Explaining the contents of more
-
-
-JSON Structure
-{
- `packages` list [
-  {`package` object}
- ]
-}
-
-## Version File Description
-
-JSON objects of packages with arrays of versions, ordered by highest ascending
-
-
-<!--
+== Program description
 
 What it's supposed to do:
 
@@ -68,5 +50,20 @@ Then the program prepares a message using telegram that includes the package nam
 it sends this message to the specified user(s)
 Finally the package information is updated in the local file and uploaded back to gist
 
+== Package File Description
 
- -->
+JSON Array of packages with these fields:
+
+. `name`: Name of Package
+. `description`: Description of package or file
+. `source`: URL of the page to monitor for announcements
+. `download`: Combined URL for file download
+. `type`: tag/release GitHub type that the information needs to get parsed for
+also 'binary' for non GitHub files
+. `more`: Addtional stuff needed or useful for data extraction
+. `comment`: Explaining the contents of more
+. `versions`: List of versions known to the program
+
+== Version File Description
+
+JSON objects of packages with arrays of versions, ordered by highest ascending
