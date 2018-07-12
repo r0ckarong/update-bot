@@ -31,10 +31,6 @@ known_versions = ""
 package_list = ""
 packages = []
 
-# Define version file
-version_file = 'known_versions.json'
-verfilepath = path+"/"+version_file
-
 # Define package list configuration
 package_listfile = "packages.json"
 pkglistpath = path+"/"+package_listfile
@@ -91,18 +87,18 @@ def read_package_info(count):
         #print(json.dumps(package_list['packages'][count]['name'], indent=2, sort_keys=True))
 
 
-def update_version_file(known_versions):
+def update_local_info(package_list):
     """
     Write the known versions information to the data file
     """
-    if os.path.exists(verfilepath):
-        with open(verfilepath, 'r+') as verfile:
-            #print(known_versions)
-            verfile.write(known_versions)
+    if os.path.exists(pkglistpath):
+        with open(pkglistpath, 'r+') as verfile:
+            #print(package_list)
+            verfile.write(package_list)
     else:
-        with open(verfilepath, 'w+') as verfile:
+        with open(pkglistpath, 'w+') as verfile:
             logging.warning('Known versions file does not exist. Creating a new one.')
-            verfile.write(known_versions)
+            verfile.write(package_list)
 
 # For debugging
 
@@ -176,7 +172,7 @@ class Package(object):
 def main():
     get_package_gist()
 
-    #update_version_file(known_versions)
+    update_local_info(package_list)
 
     #get_package_list()
 
@@ -184,7 +180,7 @@ def main():
 
     #read_package_info(2)
 
-    print_packages()
+    #print_packages()
 
     # print(len(package_list))
     # count = 0
