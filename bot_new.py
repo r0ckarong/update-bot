@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 # Set up argument parsing
 parser = ArgumentParser()
 parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true", )
-parser.add_argument("-a", "--all", help="Print raw packages output", action="store_true")
-parser.add_argument("-f", "--full", help="Get the full output for a certain package.", action="store_true")
+parser.add_argument("-r", "--raw", help="Print raw output of packages Gist", action="store_true")
+parser.add_argument("-i", "--pkginfo", help="Get the full output for a certain package", action="store_true")
 
 # Set up global information
 
@@ -119,6 +119,10 @@ def print_packages():
         #print(pkgs['packages'][count]['versions'])
         count += 1
 
+def find_package():
+    package_list
+    print(package_list)
+
 class Package(object):
 
     def __init__(self):
@@ -200,12 +204,23 @@ def main():
     if args.list == True:
         print_packages()
 
-    if args.all == True:
+#Need an option here to say "If your number is in the list, show the full output. Maybe overlaps with belw"
+
+    if args.raw == True:
         print(package_list)
+
+    if args.pkginfo == True:
+        print(args.pkginfo)
+
+        print(package_list)
+
+# Need a statement here that does "If options is raw AND a number, display the stuff for number"
 
 # #Figure out how to take "package" input and use that as secondary parameter
 #     if args.full == True:
 #         print(package_list)
+
+    print(args)
 
 if __name__ == "__main__":
     main()
