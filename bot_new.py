@@ -12,7 +12,6 @@ import time
 import logging
 import errno
 import gist
-import pprint
 # import pdb
 
 # Set up logging

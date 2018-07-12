@@ -14,6 +14,14 @@ Written (currently) in Python 3.x compliant syntax.
 * telepot
 * schedule
 * python-gist
+* Set up a `~/.gist` file with
++
+----
+[gist]
+token: 12350117510510urtoken131591378
+editor: /usr/bin/vim
+----
+
 
 ## Package File Description
 
