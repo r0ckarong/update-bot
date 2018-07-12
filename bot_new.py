@@ -22,13 +22,6 @@ logger = logging.getLogger(__name__)
 # Set up argument parsing
 parser = ArgumentParser()
 parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true", )
-#parser.add_argument('echo')
-
-# Need to figure out how to do this
-# parser.add_argument("-m", "--manual", help="Check and update only the specified package.")
-
-
-
 
 # Set up global information
 
