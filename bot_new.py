@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 # Set up argument parsing
 parser = ArgumentParser()
 parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true", )
+parser.add_argument("-a", "--all", help="Print raw packages output", action="store_true")
+parser.add_argument("-f", "--full", help="Get the full output for a certain package.", action="store_true")
 
 # Set up global information
 
@@ -162,6 +164,10 @@ class Package(object):
         self.versions = package_list['packages'][X]['versions']
 
 
+#def test_get_gh_release():
+    #print(package_list)
+
+
 # class GHRelase(Package):
 #
 # class GHTag(Package):
@@ -174,13 +180,13 @@ def main():
 
     update_local_info(package_list)
 
+    #test_get_gh_release()
+
     #get_package_list()
 
     #read_local_package_list()
 
     #read_package_info(2)
-
-    print_packages()
 
     # print(len(package_list))
     # count = 0
@@ -189,10 +195,17 @@ def main():
     #     count += 1
 
     args = parser.parse_args()
+    #print(args)
 
-    #print(parser.parse_args('--list'.split()))
     if args.list == True:
         print_packages()
+
+    if args.all == True:
+        print(package_list)
+
+# #Figure out how to take "package" input and use that as secondary parameter
+#     if args.full == True:
+#         print(package_list)
 
 if __name__ == "__main__":
     main()
