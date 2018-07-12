@@ -45,6 +45,7 @@ def get_package_gist():
     try:
         global package_list
         logger.info("Retrieving version info from Gist")
+        # This is the JSON input from the package file stored on GitHub, need to rebuild to use local fallback
         package_list = subprocess.check_output(['gist', 'content', gist_id, 'packages.json'], universal_newlines=True)
         #print(package_list)
     except CalledProcessError as error:
@@ -108,7 +109,6 @@ def print_packages():
     """
     count = 0
     number = len(json.loads(package_list)['packages'])
-    print(number)
     logger.info("There are [" + str(number) + "] packages to be checked.")
     pkgs = json.loads(package_list)
     print("There are [" + str(number) + "] packages to be checked.")
@@ -180,7 +180,7 @@ def main():
 
     #read_package_info(2)
 
-    #print_packages()
+    print_packages()
 
     # print(len(package_list))
     # count = 0
