@@ -13,16 +13,17 @@ NOTE: It's highly recommended to set up a virtual environment based on the `requ
 pip3 install requests schedule bs4 telepot python-gist
 ----
 
-* Python 3.6.x
+* Python 3.6.x (tested on 3.6.5)
 * Requests 2.18.x
-* argparse
-* subprocess
-* errno
-* json
-* BeautifulSoup4
-* telepot
-* schedule
-* python-gist
+* link:https://docs.python.org/3.6/library/argparse.html[argparse]
+* link:https://docs.python.org/3.6/library/subprocess.html[subprocess]
+* link:https://docs.python.org/3.6/library/errno.html[errno]
+* link:https://docs.python.org/3.6/library/json.html[json]
+* link:https://www.crummy.com/software/BeautifulSoup/[BeautifulSoup4]
+* link:https://github.com/nickoala/telepot[telepot]
+* link:https://github.com/dbader/schedule[schedule]
+* link:https://pypi.org/project/python-gist/[python-gist]
+* link:https://github.com/PyGithub/PyGithub[pygithub]
 * Set up a `~/.gist` file with
 +
 ----
