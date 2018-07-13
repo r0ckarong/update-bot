@@ -22,7 +22,8 @@ logger = logging.getLogger(__name__)
 parser = ArgumentParser()
 parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true", )
 parser.add_argument("-r", "--raw", help="Print raw output of packages Gist", action="store_true")
-parser.add_argument("-i", "--pkginfo", help="Get the full output for a certain package", action="store_true")
+parser.add_argument("-i", "--pkginfo", type=int, help="Get the full output for a certain package")
+
 
 # Set up global information
 
@@ -109,19 +110,54 @@ def print_packages():
     """
     Prints the configured packages and their known version numbers
     """
+    pkgs = json.loads(package_list)['packages']
     count = 0
-    number = len(json.loads(package_list)['packages'])
+    number = len(pkgs)
     logger.info("There are [" + str(number) + "] packages to be checked.")
-    pkgs = json.loads(package_list)
     print("There are [" + str(number) + "] packages to be checked.")
     while count < number:
-        print(str((count+1)) + ":" + pkgs['packages'][count]['name'])
+        print(str((count+1)) + ":" + pkgs[count]['name'])
         #print(pkgs['packages'][count]['versions'])
         count += 1
+
+def package_info(entry):
+    """
+    Prints information for a single entry
+    """
+    pkgs = json.loads(package_list)
+    #print(pkgs['packages'][entry])
+    print(json.dumps(pkgs['packages'][entry], indent=2, sort_keys=True))
 
 def find_package():
     package_list
     print(package_list)
+
+"""
+Process user input of arguments
+"""
+def parse_options():
+    global args
+
+    args = parser.parse_args()
+
+    if args.list:
+        print_packages()
+    elif args.raw:
+        print(package_list)
+    elif args.pkginfo == 0:
+        print_packages()
+    elif args.pkginfo == None:
+        args.pkginfo = 0
+    elif args.pkginfo > 0:
+        entries = len(json.loads(package_list)['packages'])
+
+        if args.pkginfo > entries:
+            print_packages()
+            print("Choose a value between 1-" + str(entries))
+        else:
+            package_info(args.pkginfo-1)
+
+    print(args)
 
 class Package(object):
 
@@ -161,7 +197,7 @@ class Package(object):
         self.type = package_list['packages'][X]['type']
 
 
-    def get_package_versions():
+    def get_package_versions(pkg_int):
         """
         Reads the known versions for a package from the package list
         """
@@ -190,37 +226,13 @@ def main():
 
     #read_local_package_list()
 
-    #read_package_info(2)
-
-    # print(len(package_list))
-    # count = 0
-    # while count < len(package_list):
-    #     read_package_info(count)
-    #     count += 1
-
-    args = parser.parse_args()
-    #print(args)
-
-    if args.list == True:
-        print_packages()
-
-#Need an option here to say "If your number is in the list, show the full output. Maybe overlaps with belw"
-
-    if args.raw == True:
-        print(package_list)
-
-    if args.pkginfo == True:
-        print(args.pkginfo)
-
-        print(package_list)
+    parse_options()
 
 # Need a statement here that does "If options is raw AND a number, display the stuff for number"
 
 # #Figure out how to take "package" input and use that as secondary parameter
 #     if args.full == True:
 #         print(package_list)
-
-    print(args)
 
 if __name__ == "__main__":
     main()
