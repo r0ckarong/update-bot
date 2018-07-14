@@ -1,8 +1,9 @@
 # Define imports and global stuff
 
 from bs4 import BeautifulSoup
-import subprocess
 from argparse import ArgumentParser
+from github import Github
+import subprocess
 import requests
 import json
 import telepot
@@ -12,6 +13,7 @@ import time
 import logging
 import errno
 import gist
+
 # import pdb
 
 # Set up logging
@@ -20,15 +22,16 @@ logger = logging.getLogger(__name__)
 
 # Set up argument parsing
 parser = ArgumentParser()
-parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true", )
+parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true")
+parser.add_argument("-ll", "--long", help="Print the list of packages and their known versions", action="store_true")
 parser.add_argument("-r", "--raw", help="Print raw output of packages Gist", action="store_true")
 parser.add_argument("-i", "--pkginfo", type=int, help="Get the full output for a certain package")
-
 
 # Set up global information
 
 # Set up environment
 path = os.getcwd()
+gh = Github()
 
 known_versions = ""
 package_list = ""
@@ -54,7 +57,14 @@ def get_package_gist():
     except CalledProcessError as error:
         logger.exception("Retrieving version info failed. Connection problem?")
 
-def read_local_package_list():
+def parse_package_list():
+    """
+    Reads the packages list and fills the array of packages to check
+    """
+    global pkgs
+    pkgs = json.loads(package_list)['packages']
+
+def read_local_list():
     """
     Reads the package list file in the directory
     """
@@ -64,34 +74,11 @@ def read_local_package_list():
             package_list = pkgfile.read()
             #print(package_list)
     else:
+        print("Package list file does not exist.")
         logger.critical("Package list file does not exist.")
-        print('File not found.')
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), pkglistpath)
 
-def get_package_list():
-    """
-    Reads the packages list and fills the array of packages to check
-    """
-    global package_list
-    with open(pkglistpath) as pkglist:
-        package_list = json.loads(pkglist.read())
-        #print(package_list)
-        #print(package_list[0]['qbittorrent']['versions'])
-
-
-def read_package_info(count):
-    """
-    Read the information for a specified package
-    """
-    count = 0
-    while count < len(package_list):
-        packages = json.dumps(package_list['packages'])
-        print(packages[count])
-        #print(json.dumps(package_list['packages'][count], indent=2, sort_keys=True))
-        #print(json.dumps(package_list['packages'][count]['name'], indent=2, sort_keys=True))
-
-
-def update_local_info(package_list):
+def update_local_list(package_list):
     """
     Write the known versions information to the data file
     """
@@ -101,46 +88,40 @@ def update_local_info(package_list):
             verfile.write(package_list)
     else:
         with open(pkglistpath, 'w+') as verfile:
+            print('Known versions file does not exist. Creating a new one.')
             logging.warning('Known versions file does not exist. Creating a new one.')
             verfile.write(package_list)
-
-# For debugging
 
 def print_packages():
     """
     Prints the configured packages and their known version numbers
     """
-    pkgs = json.loads(package_list)['packages']
     count = 0
     number = len(pkgs)
     logger.info("There are [" + str(number) + "] packages to be checked.")
     print("There are [" + str(number) + "] packages to be checked.")
     while count < number:
         print(str((count+1)) + ":" + pkgs[count]['name'])
-        #print(pkgs['packages'][count]['versions'])
+        if args.long:
+            print(pkgs[count]['known_versions'])
         count += 1
 
 def package_info(entry):
     """
     Prints information for a single entry
     """
-    pkgs = json.loads(package_list)
     #print(pkgs['packages'][entry])
-    print(json.dumps(pkgs['packages'][entry], indent=2, sort_keys=True))
+    print(json.dumps(pkgs[entry], indent=2, sort_keys=False))
 
-def find_package():
-    package_list
-    print(package_list)
-
-"""
-Process user input of arguments
-"""
 def parse_options():
+    """
+    Process user input of arguments
+    """
     global args
 
     args = parser.parse_args()
 
-    if args.list:
+    if args.list or args.long:
         print_packages()
     elif args.raw:
         print(package_list)
@@ -157,7 +138,25 @@ def parse_options():
         else:
             package_info(args.pkginfo-1)
 
-    print(args)
+    #print(args)
+
+def GH_get_release_info():
+    """
+    Retrieve release information from GitHub repository
+    """
+    # Test with atom project for now
+    user = gh.get_user('atom')
+    repo = gh.get_repo('atom')
+    releases = repo.get_releases()[5]
+    for release in releases:
+        draft = release.draft
+        prerelease = release.prerelease
+        title = release.title
+        id = release.id
+        changes = release.body
+        url = release.html_url
+        print(r.title, r.id, r.tarball_url, r.tag_name, r.prerelease)
+
 
 class Package(object):
 
@@ -189,7 +188,6 @@ class Package(object):
     def set_source():
         self.source = package_list['packages'][X]['source']
 
-
     def set_type():
         """
         Reads the type of package release to be used in discovery and URL processing
@@ -218,21 +216,11 @@ class Package(object):
 def main():
     get_package_gist()
 
-    update_local_info(package_list)
+    parse_package_list()
 
-    #test_get_gh_release()
-
-    #get_package_list()
-
-    #read_local_package_list()
+    update_local_list(package_list)
 
     parse_options()
-
-# Need a statement here that does "If options is raw AND a number, display the stuff for number"
-
-# #Figure out how to take "package" input and use that as secondary parameter
-#     if args.full == True:
-#         print(package_list)
 
 if __name__ == "__main__":
     main()
