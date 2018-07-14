@@ -1,27 +1,36 @@
 {
-  "packages": [
-    {
+  "packages": [{
       "package": "Test",
       "name": "Testpackage",
-      "source": "",
-      "type": "",
+      "source": "github",
+      "type": "release",
+      "github": [{
+        "user": "username"
+      }, {
+        "repo": "repository"
+      }],
       "more": [],
       "comment": "A test entry",
-      "versions": [
+      "known_versions": [
         "1.2.3",
         "1.2.4"
-        ]
+      ]
     },
     {
       "package": "qbittorrent",
       "name": "qBittorrent",
       "description": "qBittorrent release",
-      "source": "https://api.github.com/repos/qbittorrent/qBittorrent/tags",
+      "source": "github",
       "type": "tag",
+      "github": [{
+        "user": "qbittorrent"
+      }, {
+        "repo": "qBittorrent"
+      }],
       "download": "https://github.com/qbittorrent/qBittorrent/archive/release-<VERSION>.tar.gz",
       "more": [],
       "comment": "latest release tag",
-      "versions": [
+      "known_versions": [
         "3.3.12",
         "3.3.13",
         "3.3.14",
@@ -39,12 +48,17 @@
     {
       "package": "keepassxc",
       "name": "KeePassXC",
-      "source": "https://api.github.com/repos/keepassxreboot/keepassxc/releases",
+      "source": "github",
       "type": "release",
+      "github": [{
+        "user": "keepassxreboot"
+      }, {
+        "repo": "keepassxc"
+      }],
       "download": "https://github.com/keepassxreboot/keepassxc/releases/tag/",
       "more": [],
       "comment": "latest tagged release",
-      "versions": [
+      "known_versions": [
         "2.1.4",
         "2.2.0",
         "2.2.1",
@@ -63,10 +77,15 @@
       "name": "Atom",
       "source": "https://api.github.com/repos/atom/atom/releases/latest",
       "type": "release",
+      "github": [{
+        "user": "atom"
+      }, {
+        "repo": "atom"
+      }],
       "download": "https://github.com/atom/atom/releases/tag/v<VERSION>",
       "more": [],
       "comment": "latest tagged release",
-      "versions": [
+      "known_versions": [
         "1.17.2",
         "1.18.0",
         "1.19.0",
@@ -102,12 +121,17 @@
     {
       "package": "asciidoctor-pdf",
       "name": "AsciidoctorPDF",
-      "source": "https://api.github.com/repos/asciidoctor/asciidoctor-pdf/releases",
+      "source": "github",
       "type": "release",
+      "github": [{
+        "user": "asciidoctor"
+      }, {
+        "repo": "asciidoctor-pdf"
+      }],
       "download": "",
       "more": [],
       "comment": "",
-      "versions": [
+      "known_versions": [
         "v1.5.0 Alpha 16"
       ]
     },
@@ -120,7 +144,7 @@
       "download": "",
       "more": [],
       "comment": "Last release in sorted table, version must be higher than current, dl - url must be extracted",
-      "versions": [
+      "known_versions": [
         "A520FXXU4CRF1"
       ]
     }
