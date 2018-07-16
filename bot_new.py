@@ -27,6 +27,10 @@ parser.add_argument("-ll", "--long", help="Print the list of packages and their 
 parser.add_argument("-r", "--raw", help="Print raw output of packages Gist", action="store_true")
 parser.add_argument("-i", "--pkginfo", type=int, help="Get the full output for a certain package")
 
+### Not implemented yet
+#parser.add_argument("-d", "--daemon", action='store_true', help="Tells the program to keep checking repeatedly in the background.")
+#parser.add_argument("-t", "--token", type=str, help="GitHub access token")
+
 # Set up global information
 
 # Set up environment
@@ -214,13 +218,13 @@ class Package(object):
 
 
 def main():
+    parse_options()
+
     get_package_gist()
 
     parse_package_list()
 
     update_local_list(package_list)
-
-    parse_options()
 
 if __name__ == "__main__":
     main()
