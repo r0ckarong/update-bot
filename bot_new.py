@@ -3,6 +3,7 @@
 from bs4 import BeautifulSoup
 from argparse import ArgumentParser
 from github import Github
+from pprint import pprint
 import subprocess
 import requests
 import json
@@ -161,6 +162,19 @@ def GH_get_release_info():
         url = release.html_url
         print(r.title, r.id, r.tarball_url, r.tag_name, r.prerelease)
 
+def build_package_array():
+    arr = []
+    pack = 0
+    while pack < len(pkgs):
+        obj = Package()
+        arr.append(obj)
+        arr[pack].package = pkgs[pack]['package']
+        print(pkgs[pack]['package'])
+        print(arr[pack].package)
+        pack += 1
+
+    pprint(arr)
+    print(arr[0].name)
 
 class Package(object):
 
@@ -186,7 +200,6 @@ class Package(object):
         self.more = []
         self.versions = []
         self.type = ''
-
 
 # The [X] can't work, figure out how to iterate packages without writing a specific class for each one
     def set_source():
@@ -224,7 +237,9 @@ def main():
 
     parse_package_list()
 
-    update_local_list(package_list)
+    build_package_array()
+
+    #update_local_list(package_list)
 
 if __name__ == "__main__":
     main()
