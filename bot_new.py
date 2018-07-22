@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 # Set up argument parsing
 parser = ArgumentParser()
+parser.add_argument("--latest", type=int, help="Display the latest release info from GitHub for the selected package")
 parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true")
 parser.add_argument("-ll", "--long", help="Print the list of packages and their known versions", action="store_true")
 parser.add_argument("-r", "--raw", help="Print raw output of packages Gist", action="store_true")
@@ -34,7 +35,7 @@ parser.add_argument("-t", "--token", type=str, help="GitHub access token")
 
 ### Not implemented yet
 #parser.add_argument("-d", "--daemon", action='store_true', help="Tells the program to keep checking repeatedly in the background.")
-#parser.add_argument("--latest", type=int, help="Display the latest release info from GitHub for the selected package")
+
 
 
 # Set up global information
@@ -128,34 +129,19 @@ def package_info(entry):
     #print(pkgs['packages'][entry])
     print(json.dumps(pkgs[entry], indent=2, sort_keys=False))
 
-def parse_options():
+def latest_release_info(entry):
     """
-    Process user input of arguments
+    Prints the latest release info for a given package
     """
-    global gh
-    global args
+    type = pkgs[entry]['type']
+    package = pkgs[entry]['package']
 
-    args = parser.parse_args()
-
-    if args.list or args.long:
-        print_packages()
-    elif args.raw:
-        print(package_list)
-    elif args.pkginfo == 0:
-        print_packages()
-    elif args.pkginfo == None:
-        args.pkginfo = 0
-    elif args.pkginfo > 0:
-        entries = len(json.loads(package_list)['packages'])
-
-        if args.pkginfo > entries:
-            print("Choose a value between 1-" + str(entries))
-        else:
-            package_info(args.pkginfo-1)
-
-    gh = Github(args.token)
-
-    #print(args)
+    if type == "binary":
+        print("This type is currently not supported.")
+    else:
+        user = pkgs[entry]['github'][0]['user']
+        repo = pkgs[entry]['github'][1]['repo']
+        github_get_release_info(package, user, repo, type)
 
 def github_get_release_info(package, user, repo, type):
     """
@@ -165,12 +151,11 @@ def github_get_release_info(package, user, repo, type):
     gh_user = gh.get_user(user)
     gh_repo = gh_user.get_repo(repo)
 
-    print("Latest release for " + package + ":")
-    print("===================================")
+    header = "Latest " + str.upper(type) + " for " + package + ":"
+    print(header)
+    print("=" * len(header))
 
     if type == "release":
-        print("Type is RELEASE")
-
         latest = []
         releases = gh_repo.get_releases()[:5]
 
@@ -183,8 +168,6 @@ def github_get_release_info(package, user, repo, type):
         print(latest[0].body)
 
     elif type == "prerelease":
-        print("Type is PRERELEASE")
-
         releases = gh_repo.get_releases()[:1]
 
         for release in releases:
@@ -193,8 +176,6 @@ def github_get_release_info(package, user, repo, type):
             print(release.body)
 
     elif type == "tag":
-        print("Type is TAG")
-
         releases = gh_repo.get_tags()[:1]
 
         for release in releases:
@@ -275,42 +256,56 @@ class Package(object):
 def main():
     #parse_options()
 
-    global gh
     global args
+    global gh
 
     args = parser.parse_args()
-
     gh = Github(args.token)
 
     get_package_gist()
 
     parse_package_list()
 
+    entries = len(json.loads(package_list)['packages'])
     if args.list or args.long:
         print_packages()
-    elif args.raw:
+
+    if args.latest == None:
+        pass
+    elif args.latest > 0:
+        if args.latest > entries:
+            print("Value too high.\nChoose a value between 1-" + str(entries) + "\n")
+            print_packages()
+            pass
+        elif args.latest <= entries:
+            latest_release_info(args.latest-1)
+
+    if args.raw:
         print(package_list)
+
+    if args.pkginfo == None:
+        pass
     elif args.pkginfo == 0:
         print_packages()
-    elif args.pkginfo == None:
-        args.pkginfo = 0
-    elif args.pkginfo > 0:
-        entries = len(json.loads(package_list)['packages'])
-
+    elif args.pkginfo >= 1:
         if args.pkginfo > entries:
-            print("Choose a value between 1-" + str(entries))
-        else:
+            print("Value too high.\nChoose a value between 1-" + str(entries) + "\n")
+
+            print_packages()
+            pass
+        elif args.pkginfo <= entries:
             package_info(args.pkginfo-1)
+
 
     build_package_array()
 
     #github_get_release_info()
 
-    github_get_release_info('atom', 'atom', 'atom', 'release')
-    github_get_release_info('KeePassxc', 'keepassxreboot', 'keepassxc', 'release')
-    github_get_release_info('qBittorrent', 'qbittorrent', 'qBittorrent', 'tag')
-    github_get_release_info('AsciiDoctor-PDF', 'asciidoctor', 'asciidoctor-pdf', 'prerelease')
-    github_get_release_info('AsciiBinder', 'redhataccess', 'ascii_binder', 'tag')
+    #github_get_release_info('atom', 'atom', 'atom', 'release')
+    #github_get_release_info('KeePassxc', 'keepassxreboot', 'keepassxc', 'release')
+    #github_get_release_info('qBittorrent', 'qbittorrent', 'qBittorrent', 'tag')
+    #github_get_release_info('AsciiDoctor-PDF', 'asciidoctor', 'asciidoctor-pdf', 'prerelease')
+    #github_get_release_info('AsciiBinder', 'redhataccess', 'ascii_binder', 'tag')
 
     #update_local_list(package_list)
 
