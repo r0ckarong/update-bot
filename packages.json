@@ -137,7 +137,7 @@
     },
     {
       "package": "ascii_binder",
-      "name": "AsciidoctorPDF",
+      "name": "AsciiBinder",
       "source": "github",
       "type": "tag",
       "github": [{
