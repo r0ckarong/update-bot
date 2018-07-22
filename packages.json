@@ -31,18 +31,18 @@
       "more": [],
       "comment": "latest release tag",
       "known_versions": [
-        "3.3.12",
-        "3.3.13",
-        "3.3.14",
-        "3.3.15",
-        "3.3.16",
-        "4.0.0",
-        "4.0.1",
-        "4.0.2",
-        "4.0.3",
-        "4.0.4",
-        "4.1.0",
-        "4.1.1"
+        "release-3.3.12",
+        "release-3.3.13",
+        "release-3.3.14",
+        "release-3.3.15",
+        "release-3.3.16",
+        "release-4.0.0",
+        "release-4.0.1",
+        "release-4.0.2",
+        "release-4.0.3",
+        "release-4.0.4",
+        "release-4.1.0",
+        "release-4.1.1"
       ]
     },
     {
@@ -86,43 +86,43 @@
       "more": [],
       "comment": "latest tagged release",
       "known_versions": [
-        "1.17.2",
-        "1.18.0",
-        "1.19.0",
-        "1.19.1",
-        "1.19.3",
-        "1.19.4",
-        "1.19.5",
-        "1.19.6",
-        "1.19.7",
-        "1.20.0",
-        "1.20.1",
-        "1.21.0",
-        "1.21.1",
-        "1.21.2",
-        "1.22.0",
-        "1.22.1",
-        "1.23.0",
-        "1.23.1",
-        "1.23.2",
-        "1.23.3",
-        "1.24.0",
-        "1.24.1",
-        "1.25.0",
-        "1.25.1",
-        "1.26.0",
-        "1.26.1",
-        "1.27.1",
-        "1.27.2",
-        "1.28.0",
-        "1.28.1"
+        "v1.17.2",
+        "v1.18.0",
+        "v1.19.0",
+        "v1.19.1",
+        "v1.19.3",
+        "v1.19.4",
+        "v1.19.5",
+        "v1.19.6",
+        "v1.19.7",
+        "v1.20.0",
+        "v1.20.1",
+        "v1.21.0",
+        "v1.21.1",
+        "v1.21.2",
+        "v1.22.0",
+        "v1.22.1",
+        "v1.23.0",
+        "v1.23.1",
+        "v1.23.2",
+        "v1.23.3",
+        "v1.24.0",
+        "v1.24.1",
+        "v1.25.0",
+        "v1.25.1",
+        "v1.26.0",
+        "v1.26.1",
+        "v1.27.1",
+        "v1.27.2",
+        "v1.28.0",
+        "v1.28.1"
       ]
     },
     {
       "package": "asciidoctor-pdf",
       "name": "AsciidoctorPDF",
       "source": "github",
-      "type": "release",
+      "type": "prerelease",
       "github": [{
         "user": "asciidoctor"
       }, {
@@ -130,9 +130,26 @@
       }],
       "download": "",
       "more": [],
-      "comment": "",
+      "comment": "Last available tag release",
       "known_versions": [
         "v1.5.0 Alpha 16"
+      ]
+    },
+    {
+      "package": "ascii_binder",
+      "name": "AsciidoctorPDF",
+      "source": "github",
+      "type": "tag",
+      "github": [{
+        "user": "redhataccess"
+      }, {
+        "repo": "ascii_binder"
+      }],
+      "download": "",
+      "more": [],
+      "comment": "Last available tag release",
+      "known_versions": [
+        "v0.1.15.1"
       ]
     },
     {
@@ -150,4 +167,3 @@
     }
   ]
 }
-
