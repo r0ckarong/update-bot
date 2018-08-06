@@ -4,15 +4,16 @@ from bs4 import BeautifulSoup
 from argparse import ArgumentParser
 from github import Github
 from pprint import pprint
+import configparser
 import subprocess
+import logging
+import time
+import errno
+import os
 import requests
 import json
 import telepot
-import os
 import schedule
-import time
-import logging
-import errno
 import gist
 
 # import pdb
@@ -24,19 +25,23 @@ logging.basicConfig(format='%(asctime)s %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Set up configuration parsing
+config = configparser.ConfigParser()
+
 # Set up argument parsing
 parser = ArgumentParser()
 parser.add_argument("--latest", type=int, help="Display the latest release info from GitHub for the selected package")
-parser.add_argument("-l", "--list", help="Print the list of packages to check", action="store_true")
-parser.add_argument("-ll", "--long", help="Print the list of packages and their known versions", action="store_true")
-parser.add_argument("-r", "--raw", help="Print raw output of packages Gist", action="store_true")
+parser.add_argument("-l", "--list", action="store_true", help="Print the list of packages to check")
+parser.add_argument("-ll", "--long", action="store_true", help="Print the list of packages and their known versions")
+parser.add_argument("-r", "--raw", action="store_true", help="Print raw output of packages Gist")
 parser.add_argument("-i", "--pkginfo", type=int, help="Get the full output for a certain package")
 parser.add_argument("-t", "--token", type=str, help="GitHub access token")
+parser.add_argument("-u", "--user", type=str, help="Telegram User ID of who should receive messages")
+parser.add_argument("-b", "--bot", type=str, help="Telegram Bot Token")
+parser.add_argument("--store", action='store_true', help="Store login credentials/tokens in config file")
 
 ### Not implemented yet
-#parser.add_argument("-d", "--daemon", action='store_true', help="Tells the program to keep checking repeatedly in the background.")
-
-
+#parser.add_argument("-d", "--daemon", action='store_true', help="Tells the program to keep checking repeatedly in the background")
 
 # Set up global information
 
@@ -106,6 +111,14 @@ def update_local_list(package_list):
             logging.warning('Known versions file does not exist. Creating a new one.')
             verfile.write(package_list)
 
+def update_version_gist(package_list):
+    """
+    Update the version info gist on GitHub
+    """
+
+    logger.info("Updated Version info Gist." + str(gist_id))
+    print("Updating Version info Gist.")
+
 def print_packages():
     """
     Prints the configured packages and their known version numbers
@@ -133,6 +146,7 @@ def latest_release_info(entry):
     """
     Prints the latest release info for a given package
     """
+
     type = pkgs[entry]['type']
     package = pkgs[entry]['package']
 
@@ -206,7 +220,11 @@ def build_package_array():
     # print(arr[0].name)
 
 def send_message(package, release, url, changes):
-    print("A new release for ")
+    user_id = os.environ['USER_ID']
+    bot = telepot.Bot(os.environ['BOT_TOKEN'])
+    logger.info("Sending a message to " + user_id)
+    message = "📣 New release for " + package + "\n* Version: " + release + "\n* D/L: " + url + "\n* Changelog: " + changes
+    bot.sendMessage(user_id, message)
 
 class Package(object):
 
@@ -308,6 +326,9 @@ def main():
     #github_get_release_info('AsciiBinder', 'redhataccess', 'ascii_binder', 'tag')
 
     #update_local_list(package_list)
+    #update_version_gist(package_list)
+
+    #send_message("TESTPACKAGE", "1.2.3", "https://markus-napp.de/bla", "Nothing changed.")
 
     # Need to handle errors:
     # ConnectionResetError
