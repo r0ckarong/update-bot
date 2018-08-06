@@ -152,6 +152,26 @@
         "v0.1.15.1"
       ]
     },
+  {
+    "package": "libtorrent",
+    "name": "libTorrent",
+    "source": "github",
+    "type": "release",
+    "github": [{
+      "user": "arvidn"
+    }, {
+      "repo": "libtorrent"
+    }],
+    "download": "",
+    "more": [],
+    "comment": "Last available tag release",
+    "known_versions": [
+      "1.1.5",
+      "1.1.6",
+      "1.1.7",
+      "1.1.8"
+    ]
+  },
     {
       "package": "a520f",
       "name": "A520F",
