@@ -12,6 +12,10 @@
 * Import packages to watch from external JSON file (project name, URL, type for match [release or name])
 * Update version file from gist without external ruby gist tool
 ** probably use https://pypi.org/project/python-gist/
+* Refactor Update classes for duplicated initialization
+* Add GitHub auth to forgo rate limits
+* Read Packages to check from external JSON file
+* Implement option to read a single library (raw, full output, name, versions)
 
 == TODOS
 
@@ -21,18 +25,15 @@
 *** https://www.digitalocean.com/community/tutorials/how-to-use-web-apis-in-python-3
 *** Define function that grabs data, verifies return code
 * Make version list independent of ordering
-* Refactor data calls to GraphQL / GitHub QPI v4
-** http://graphene-python.org/
-* Refactor Update classes for duplicated initialization
 * Add dead man switch
 ** At midnight ":bell: All's well, all's well. :bell:"
 * Refactor get_version to be handled only once inside the Update Class
 ** Started on `refactor-get_version branch`
-* Add GitHub auth to forgo rate limits
-* Read Packages to check from external JSON file
 * Refactor package initialization into class
 * Refactor version stringing into two reusable functions
-* Implement option to read a single library (raw, full output, name, versions)
+* Implement configuration parsing and storage (https://docs.python.org/3.6/library/configparser.html)
+* Implement Daemon mode
+
 
 === Unhandled Errors
 
