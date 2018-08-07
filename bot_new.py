@@ -36,12 +36,11 @@ parser.add_argument("-ll", "--long", action="store_true", help="Print the list o
 parser.add_argument("-r", "--raw", action="store_true", help="Print raw output of packages Gist")
 parser.add_argument("-i", "--pkginfo", type=int, help="Get the full output for a certain package")
 parser.add_argument("-t", "--token", type=str, help="GitHub access token")
+# Not implemented yet
 parser.add_argument("-u", "--user", type=str, help="Telegram User ID of who should receive messages")
 parser.add_argument("-b", "--bot", type=str, help="Telegram Bot Token")
 parser.add_argument("--store", action='store_true', help="Store login credentials/tokens in config file")
-
-### Not implemented yet
-#parser.add_argument("-d", "--daemon", action='store_true', help="Tells the program to keep checking repeatedly in the background")
+parser.add_argument("-d", "--daemon", action='store_true', help="Tells the program to keep checking repeatedly in the background")
 
 # Set up global information
 
