@@ -35,12 +35,12 @@ parser.add_argument("-l", "--list", action="store_true", help="Print the list of
 parser.add_argument("-ll", "--long", action="store_true", help="Print the list of packages and their known versions")
 parser.add_argument("-r", "--raw", action="store_true", help="Print raw output of packages Gist")
 parser.add_argument("-i", "--pkginfo", type=int, help="Get the full output for a certain package")
-parser.add_argument("-t", "--token", type=str, help="GitHub access token")
+parser.add_argument("-t", "--token", type=str, help="Provide GitHub access token")
 # Not implemented yet
 parser.add_argument("-u", "--user", type=str, help="Telegram User ID of who should receive messages")
 parser.add_argument("-b", "--bot", type=str, help="Telegram Bot Token")
-parser.add_argument("--store", action='store_true', help="Store login credentials/tokens in config file")
-parser.add_argument("-d", "--daemon", action='store_true', help="Tells the program to keep checking repeatedly in the background")
+#parser.add_argument("--store", action='store_true', help="Store login credentials/tokens in config file")
+#parser.add_argument("-d", "--daemon", action='store_true', help="Tells the program to keep checking repeatedly in the background")
 
 # Set up global information
 
@@ -200,11 +200,25 @@ def build_package_array():
 def send_message(package, release, url, changes):
     """Assembles a message and sends it to the specified Telegram user ID via the specified bot."""
 
-    user_id = os.environ['USER_ID']
-    bot = telepot.Bot(os.environ['BOT_TOKEN'])
-    logger.info("Sending a message to " + user_id)
+    if args.user:
+        tg_user = args.user
+    elif os.environ['USER_ID']:
+        tg_user = os.environ['USER_ID']
+    else:
+        logger.error("No Telegram user ID supplied.")
+
+    if args.bot:
+        tg_bot_token = args.bot
+    elif os.environ['BOT_TOKEN']:
+        tg_bot_token = os.environ['BOT_TOKEN']
+    else:
+        logger.error("No Telegram Bot Token supplied.")
+
     message = "📣 New release for " + package + "\n* Version: " + release + "\n* D/L: " + url + "\n* Changelog: " + changes
-    bot.sendMessage(user_id, message)
+
+    logger.info("Sending a message to " + tg_user)
+    bot = telepot.Bot(tg_bot_token)
+    bot.sendMessage(tg_user, message)
 
 class Package(object):
 
@@ -229,7 +243,6 @@ class Package(object):
         self.more = []
         self.versions = []
         self.type = ''
-
 
 def main():
     #parse_options()
@@ -276,20 +289,12 @@ def main():
 
     build_package_array()
 
-    #github_get_release_info()
-
-    #github_get_release_info('atom', 'atom', 'atom', 'release')
-    #github_get_release_info('KeePassxc', 'keepassxreboot', 'keepassxc', 'release')
-    #github_get_release_info('qBittorrent', 'qbittorrent', 'qBittorrent', 'tag')
-    #github_get_release_info('AsciiDoctor-PDF', 'asciidoctor', 'asciidoctor-pdf', 'prerelease')
-    #github_get_release_info('AsciiBinder', 'redhataccess', 'ascii_binder', 'tag')
+    #send_message(input_package_list[0]['name'],"1.2.3","https://www.google.com","Bugfixes.")
 
     #update_local_list(package_list)
     #update_version_gist(package_list)
 
-    #send_message("TESTPACKAGE", "1.2.3", "https://markus-napp.de/bla", "Nothing changed.")
-
-    # Need to handle errors:
+    ## Need to handle errors:
     # ConnectionResetError
     # JSONDecodeError
     # ProtocolError
