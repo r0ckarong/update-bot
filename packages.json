@@ -1,25 +1,6 @@
 {
   "packages": [{
-      "package": "Test",
-      "name": "Testpackage",
-      "source": "github",
-      "type": "release",
-      "github": [{
-        "user": "username"
-      }, {
-        "repo": "repository"
-      }],
-      "more": [],
-      "comment": "A test entry",
-      "known_versions": [
-        "1.2.3",
-        "1.2.4"
-      ]
-    },
-    {
-      "package": "qbittorrent",
       "name": "qBittorrent",
-      "description": "qBittorrent release",
       "source": "github",
       "type": "tag",
       "github": [{
@@ -27,7 +8,6 @@
       }, {
         "repo": "qBittorrent"
       }],
-      "download": "https://github.com/qbittorrent/qBittorrent/archive/release-<VERSION>.tar.gz",
       "more": [],
       "comment": "latest release tag",
       "known_versions": [
@@ -46,7 +26,6 @@
       ]
     },
     {
-      "package": "keepassxc",
       "name": "KeePassXC",
       "source": "github",
       "type": "release",
@@ -55,7 +34,6 @@
       }, {
         "repo": "keepassxc"
       }],
-      "download": "https://github.com/keepassxreboot/keepassxc/releases/tag/",
       "more": [],
       "comment": "latest tagged release",
       "known_versions": [
@@ -73,7 +51,6 @@
       ]
     },
     {
-      "package": "atom",
       "name": "Atom",
       "source": "https://api.github.com/repos/atom/atom/releases/latest",
       "type": "release",
@@ -82,7 +59,6 @@
       }, {
         "repo": "atom"
       }],
-      "download": "https://github.com/atom/atom/releases/tag/v<VERSION>",
       "more": [],
       "comment": "latest tagged release",
       "known_versions": [
@@ -119,7 +95,6 @@
       ]
     },
     {
-      "package": "asciidoctor-pdf",
       "name": "AsciidoctorPDF",
       "source": "github",
       "type": "prerelease",
@@ -128,7 +103,6 @@
       }, {
         "repo": "asciidoctor-pdf"
       }],
-      "download": "",
       "more": [],
       "comment": "Last available tag release",
       "known_versions": [
@@ -136,7 +110,6 @@
       ]
     },
     {
-      "package": "ascii_binder",
       "name": "AsciiBinder",
       "source": "github",
       "type": "tag",
@@ -145,7 +118,6 @@
       }, {
         "repo": "ascii_binder"
       }],
-      "download": "",
       "more": [],
       "comment": "Last available tag release",
       "known_versions": [
@@ -153,7 +125,6 @@
       ]
     },
   {
-    "package": "libtorrent",
     "name": "libTorrent",
     "source": "github",
     "type": "release",
@@ -162,7 +133,6 @@
     }, {
       "repo": "libtorrent"
     }],
-    "download": "",
     "more": [],
     "comment": "Last available tag release",
     "known_versions": [
@@ -173,12 +143,10 @@
     ]
   },
     {
-      "package": "a520f",
       "name": "A520F",
       "description": "Samsung Galaxy A5 Android 8. x Firmware DBT Region",
       "source": "https://updato.com/firmware-archive-select-model?q=A520F&rpp=15&r=DBT&v=Oreo%28Android+8.0.0%29&order=date&dir=desc&exact=1",
       "type": "binary",
-      "download": "",
       "more": [],
       "comment": "Last release in sorted table, version must be higher than current, dl - url must be extracted",
       "known_versions": [
