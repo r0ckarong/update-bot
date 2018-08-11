@@ -47,9 +47,7 @@ parser.add_argument("-d", "--daemon", action='store_true', help="Tells the progr
 # Set up environment
 path = os.getcwd()
 
-known_versions = ""
-package_list = ""
-packages = []
+#package_list = ""
 
 # Define package list configuration
 package_listfile = "packages.json"
@@ -59,9 +57,7 @@ pkglistpath = path+"/"+package_listfile
 gist_id = "dac9c4de15c7b061e7851fe1105a16d3"
 
 def get_package_gist():
-    """
-    Retrieves the current package information gist from GitHub
-    """
+    """Retrieves the current package information gist from GitHub."""
 
     try:
         global package_list
@@ -73,17 +69,13 @@ def get_package_gist():
         logger.exception("Retrieving version info failed. Connection problem?")
 
 def parse_package_list():
-    """
-    Reads the packages list and fills the array of packages to check
-    """
+    """Reads the packages list and fills the array of packages to check"""
 
-    global pkgs
-    pkgs = json.loads(package_list)['packages']
+    global input_package_list
+    input_package_list = json.loads(package_list)['packages']
 
 def read_local_list():
-    """
-    Reads the package list file in the directory
-    """
+    """Reads the package list file in the directory."""
 
     global package_list
     if os.path.exists(pkglistpath):
@@ -96,9 +88,7 @@ def read_local_list():
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), pkglistpath)
 
 def update_local_list(package_list):
-    """
-    Write the known versions information to the data file
-    """
+    """Write the known versions information to the data file."""
 
     if os.path.exists(pkglistpath):
         with open(pkglistpath, 'r+') as verfile:
@@ -111,60 +101,49 @@ def update_local_list(package_list):
             verfile.write(package_list)
 
 def update_version_gist(package_list):
-    """
-    Update the version info gist on GitHub
-    """
+    """Update the version info gist on GitHub."""
 
     logger.info("Updated Version info Gist." + str(gist_id))
     print("Updating Version info Gist.")
 
 def print_packages():
-    """
-    Prints the configured packages and their known version numbers
-    """
+    """Prints the configured packages and their known version numbers."""
 
     count = 0
-    number = len(pkgs)
+    number = len(input_package_list)
     logger.info("There are [" + str(number) + "] packages to be checked.")
     print("There are [" + str(number) + "] packages to be checked.")
     while count < number:
-        print(str((count+1)) + ":" + pkgs[count]['name'])
+        print(str((count+1)) + ":" + input_package_list[count]['name'])
         if args.long:
-            print(pkgs[count]['known_versions'])
+            print(input_package_list[count]['known_versions'])
         count += 1
 
 def package_info(entry):
-    """
-    Prints information for a single entry
-    """
+    """Prints information for a single entry."""
 
-    #print(pkgs['packages'][entry])
-    print(json.dumps(pkgs[entry], indent=2, sort_keys=False))
+    print(json.dumps(input_package_list[entry], indent=2, sort_keys=False))
 
 def latest_release_info(entry):
-    """
-    Prints the latest release info for a given package
-    """
+    """Prints the latest release info for a given package."""
 
-    type = pkgs[entry]['type']
-    package = pkgs[entry]['package']
+    type = input_package_list[entry]['type']
+    name = input_package_list[entry]['name']
 
     if type == "binary":
         print("This type is currently not supported.")
     else:
-        user = pkgs[entry]['github'][0]['user']
-        repo = pkgs[entry]['github'][1]['repo']
-        github_get_release_info(package, user, repo, type)
+        user = input_package_list[entry]['github'][0]['user']
+        repo = input_package_list[entry]['github'][1]['repo']
+        github_get_release_info(name, user, repo, type)
 
-def github_get_release_info(package, user, repo, type):
-    """
-    Retrieve release information from GitHub repository
-    """
+def github_get_release_info(name, user, repo, type):
+    """Retrieve release information from GitHub repository."""
 
     gh_user = gh.get_user(user)
     gh_repo = gh_user.get_repo(repo)
 
-    header = "Latest " + str.upper(type) + " for " + package + ":"
+    header = "Latest " + str.upper(type) + " for " + name + ":"
     print(header)
     print("=" * len(header))
 
@@ -201,24 +180,26 @@ def github_get_release_info(package, user, repo, type):
     print("")
 
 def build_package_array():
-    """
-    Builds the array of packages needed for operation.
-    """
+    """Builds the array of packages needed for operation."""
 
-    arr = []
+    global work_package_array
+
+    work_package_array = []
     pack = 0
-    while pack < len(pkgs):
-        obj = Package()
-        arr.append(obj)
-        arr[pack].package = pkgs[pack]['package']
-        # print(pkgs[pack]['package'])
-        # print(arr[pack].package)
+    while pack < len(input_package_list):
+        package_object = Package()
+        work_package_array.append(package_object)
+        work_package_array[pack].name = input_package_list[pack]['name']
+
+        #package_array[pack].download = input_package_list[pack]['html_url']
         pack += 1
 
-    # pprint(arr)
-    # print(arr[0].name)
+    # pprint(package_array)
+    # print(package_array[0].name)
 
 def send_message(package, release, url, changes):
+    """Assembles a message and sends it to the specified Telegram user ID via the specified bot."""
+
     user_id = os.environ['USER_ID']
     bot = telepot.Bot(os.environ['BOT_TOKEN'])
     logger.info("Sending a message to " + user_id)
@@ -228,10 +209,9 @@ def send_message(package, release, url, changes):
 class Package(object):
 
     def __init__(self):
-        """
-        Basic definition of a package
+        """Basic definition of a package
 
-        :package: The name used througout the program
+        :package: The name used throughout the program
         :name: The "pretty" name of the package
         :source: Source URL where the new package release is published
         :download: Calculated or hardcoded URL where the binary download file is located
@@ -243,7 +223,6 @@ class Package(object):
             Non-GitHub release or other website resource = binary
         """
 
-        self.package = ''
         self.name = ''
         self.source = ''
         self.download = ''
@@ -251,24 +230,6 @@ class Package(object):
         self.versions = []
         self.type = ''
 
-# The [X] can't work, figure out how to iterate packages without writing a specific class for each one
-    def set_source():
-        self.source = package_list['packages'][X]['source']
-
-    def set_type():
-        """
-        Reads the type of package release to be used in discovery and URL processing
-        """
-
-        self.type = package_list['packages'][X]['type']
-
-
-    def get_package_versions(pkg_int):
-        """
-        Reads the known versions for a package from the package list
-        """
-
-        self.versions = package_list['packages'][X]['versions']
 
 def main():
     #parse_options()
@@ -312,7 +273,6 @@ def main():
             pass
         elif args.pkginfo <= entries:
             package_info(args.pkginfo-1)
-
 
     build_package_array()
 
