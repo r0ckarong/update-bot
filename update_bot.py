@@ -42,7 +42,8 @@ def do_update():
     KeePassXC(),
     Atom(),
     AsciidoctorPDF(),
-    AsciiBinder()
+    AsciiBinder(),
+    PiHole()
     ]
 
     for update in updates:
@@ -274,6 +275,27 @@ class AsciiBinder(Update):
 
     def build_url(self):
         url = str(self.data[0]['tarball_url'])
+        return url
+
+
+class PiHole(Update):
+
+    def __init__(self):
+        self.package = 'Pi-Hole'
+        self.srcstring = 'https://api.github.com/repos/pi-hole/pi-hole/releases'
+        self.data = json.loads(self.get_data(self.srcstring).text)
+        self.known = self.get_current(self.package)
+        self.known_versions = get_known_versions()[self.package]
+        self.version = self.get_version()
+        self.url = self.build_url()
+        self.write_log(self.package)
+
+    def get_version(self):
+        version = str(self.data[0]['tag_name'])
+        return version
+
+    def build_url(self):
+        url = str(self.data[0]['html_url'])
         return url
 
 
